@@ -12,7 +12,9 @@ class Contact {
 class Contacts {
   Future<List<Contact>> read() async {
     var string = await Storage().read('contacts');
-
+    if (string.isEmpty) {
+      string = '{"contacts":[]}';
+    }
     final json = jsonDecode(string);
 
     List<Contact> contacts = [];
@@ -23,12 +25,14 @@ class Contacts {
     return contacts;
   }
 
-  void write(List<Contact> contacts) async {  
+  void write(List<Contact> contacts) async {
     final json = jsonEncode({
-      'contacts': contacts.map((contact) => {
-        'name': contact.name,
-        'pub': contact.pub,
-      }).toList(),
+      'contacts': contacts
+          .map((contact) => {
+                'name': contact.name,
+                'pub': contact.pub,
+              })
+          .toList(),
     });
 
     await Storage().write('contacts', json);

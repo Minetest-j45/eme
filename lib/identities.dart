@@ -21,16 +21,16 @@ class Identities {
     if (raw == '') {
       return [];
     }
-    
+
     List<String> identitiesString = raw.split('|');
-    
+
     List<Identity> identities = [];
-    
+
     for (var identity in identitiesString) {
       if (identity == '') {
         continue;
       }
-      
+
       String public = await _securestorage.read(key: "${identity}_pub") ?? '';
       String private = await _securestorage.read(key: "${identity}_priv") ?? '';
       identities.add(Identity(name: identity, pub: public, priv: private));
@@ -52,8 +52,10 @@ class Identities {
     var identities = await read();
     identities.add(identity);
     write(identities);
-    await _securestorage.write(key: '${identity.name}_pub', value: identity.pub);
-    await _securestorage.write(key: '${identity.name}_priv', value: identity.priv);
+    await _securestorage.write(
+        key: '${identity.name}_pub', value: identity.pub);
+    await _securestorage.write(
+        key: '${identity.name}_priv', value: identity.priv);
   }
 
   void rm(Identity identity) async {

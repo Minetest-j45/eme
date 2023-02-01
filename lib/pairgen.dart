@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:flutter/material.dart';
 
-import 'home.dart';
 import 'identities.dart';
-
 
 class NewAccountPage extends StatefulWidget {
   const NewAccountPage({super.key});
-
 
   @override
   State<NewAccountPage> createState() => _NewAccountPageState();
@@ -29,16 +26,15 @@ class _NewAccountPageState extends State<NewAccountPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(width),
-              child: TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  errorText: _nameIsEmpty,
-                  labelText: 'Enter the desired username for this identity *',
-                ),
-              )
-            ),
+                padding: EdgeInsets.all(width),
+                child: TextFormField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    errorText: _nameIsEmpty,
+                    labelText: 'Enter the desired username for this identity *',
+                  ),
+                )),
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.purple),
@@ -57,7 +53,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
                   });
                   return;
                 }
-                
+
                 //check if name already exists
                 var usernames = await Identities().read();
                 for (var i in usernames) {
@@ -70,9 +66,12 @@ class _NewAccountPageState extends State<NewAccountPage> {
                 }
 
                 var pair = await RSA.generate(4096);
-                Identities().add(Identity(name: nameController.value.text, pub: pair.publicKey, priv: pair.privateKey));
+                Identities().add(Identity(
+                    name: nameController.value.text,
+                    pub: pair.publicKey,
+                    priv: pair.privateKey));
                 //setState(() {
-                  //_HomePageState();
+                //_HomePageState();
                 //});
               },
             ),
