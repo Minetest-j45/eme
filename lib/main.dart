@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-//import 'home.dart';
-import 'newcontact.dart';
+import 'home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +16,8 @@ class MyApp extends StatelessWidget {
         primarySwatch:
             Colors.purple, //todo: make all colours from colour scheme
       ),
-      home: const NewContactPage(),
-      //home: const HomePage(),
+      //home: const NewContactPage(),
+      home: const HomePage(),
     );
   }
 }
