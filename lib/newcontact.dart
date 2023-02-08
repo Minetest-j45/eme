@@ -55,9 +55,7 @@ class _NewContactPageState extends State<NewContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    var _toggleIndex;
     double width = MediaQuery.of(context).size.width * 0.06;
-    var nameController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -111,7 +109,6 @@ class _NewContactPageState extends State<NewContactPage> {
               ),
               child: const Text('Add a new contact'),
               onPressed: () async {
-                print(_error);
                 if (_selectedIdentity == "") {
                   _error = "Please select an identity";
                   setState(() {});
@@ -136,7 +133,6 @@ class _NewContactPageState extends State<NewContactPage> {
 
                 //get toggle switch value
                 if (_toggleIndex == null) {
-                  setState(() {
                   _error = "Please select a scan order";
                   setState(() {});
                   return;
