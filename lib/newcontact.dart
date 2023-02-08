@@ -14,6 +14,9 @@ class NewContactPage extends StatefulWidget {
 class _NewContactPageState extends State<NewContactPage> {
   var _selectedIdentity = "";
   var _error = "No errors so far";
+  var _newName = "";
+  var _toggleIndex;
+  var _controller;
 
   Future<Widget> _identitiesStrs() async {
     List<Identity> identitiesArr = await Identities().read();
@@ -26,7 +29,7 @@ class _NewContactPageState extends State<NewContactPage> {
       child: DropdownButton(
         //borderRadius: BorderRadius.circular(10),
         value: _selectedIdentity == "" ? null : _selectedIdentity,
-        hint: Container(
+        hint: SizedBox(
             width: MediaQuery.of(context).size.width * 0.65,
             child: const Text("Identity to relate this new contact to")),
         items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
@@ -42,6 +45,12 @@ class _NewContactPageState extends State<NewContactPage> {
         },
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _newName);
   }
 
   @override
@@ -74,17 +83,16 @@ class _NewContactPageState extends State<NewContactPage> {
                     },
                   ),
                   TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText:
-                          'Enter the desired username for this contact *',
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter the desired username for this contact',
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(width),
                     child: ToggleSwitch(
-                      initialLabelIndex: null,
+                      initialLabelIndex: _toggleIndex,
                       totalSwitches: 2,
                       labels: const ['Scan first', 'Scan second'],
                       cornerRadius: 15,
@@ -110,7 +118,7 @@ class _NewContactPageState extends State<NewContactPage> {
                   return;
                 }
 
-                if (nameController.value.text == '') {
+                if (_controller.value.text == '') {
                   _error = 'Please enter the desired name for this contact';
                   setState(() {});
                   return;
@@ -119,7 +127,7 @@ class _NewContactPageState extends State<NewContactPage> {
                 //check if contact already exists
                 var usernames = await Contacts().read();
                 for (var i in usernames) {
-                  if (i.name == nameController.value.text) {
+                  if (i.name == _controller.value.text) {
                     _error = "This name already exists";
                     setState(() {});
                     return;
@@ -129,8 +137,8 @@ class _NewContactPageState extends State<NewContactPage> {
                 //get toggle switch value
                 if (_toggleIndex == null) {
                   setState(() {
-                    _error = "Please select a scan order";
-                  });
+                  _error = "Please select a scan order";
+                  setState(() {});
                   return;
                 }
 
