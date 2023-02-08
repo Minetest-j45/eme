@@ -1,8 +1,9 @@
-import 'package:eme/identities.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'contacts.dart';
+import 'identities.dart';
+import 'qr_codes.dart';
 
 class NewContactPage extends StatefulWidget {
   const NewContactPage({super.key});
@@ -109,8 +110,8 @@ class _NewContactPageState extends State<NewContactPage> {
               ),
               child: const Text('Add a new contact'),
               onPressed: () async {
-                if (_selectedIdentity == "") {
-                  _error = "Please select an identity";
+                if (_selectedIdentity == '') {
+                  _error = 'Please select an identity';
                   setState(() {});
                   return;
                 }
@@ -125,7 +126,7 @@ class _NewContactPageState extends State<NewContactPage> {
                 var usernames = await Contacts().read();
                 for (var i in usernames) {
                   if (i.name == _controller.value.text) {
-                    _error = "This name already exists";
+                    _error = 'This name already exists';
                     setState(() {});
                     return;
                   }
@@ -133,7 +134,7 @@ class _NewContactPageState extends State<NewContactPage> {
 
                 //get toggle switch value
                 if (_toggleIndex == null) {
-                  _error = "Please select a scan order";
+                  _error = 'Please select a scan order';
                   setState(() {});
                   return;
                 }
@@ -153,7 +154,12 @@ class _NewContactPageState extends State<NewContactPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const NewContactPage()),
+                          builder: (context) => QrDisplayPage(
+                                name: _controller.value.text,
+                                pub: "",
+                                linked_identity: _selectedIdentity,
+                                toggle_index: 1,
+                              )),
                     );
                   });
                 }
