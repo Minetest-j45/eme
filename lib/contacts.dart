@@ -25,7 +25,7 @@ class Contacts {
     return contacts;
   }
 
-  void write(List<Contact> contacts) async {
+  void _write(List<Contact> contacts) async {
     final json = jsonEncode({
       'contacts': contacts
           .map((contact) => {
@@ -41,12 +41,19 @@ class Contacts {
   void add(Contact contact) async {
     var contacts = await read();
     contacts.add(contact);
-    write(contacts);
+    _write(contacts);
   }
 
   void rm(Contact contact) async {
     var contacts = await read();
-    contacts.remove(contact);
-    write(contacts);
+    for (var cont in contacts) {
+      if ((cont.name == contact.name) &&
+          (cont.pub == contact.pub) &&
+          (cont.linked_identity == contact.linked_identity)) {
+        contacts.remove(cont);
+        _write(contacts);
+        break;
+      }
+    }
   }
 }

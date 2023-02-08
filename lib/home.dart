@@ -27,8 +27,7 @@ class _HomePageState extends State<HomePage> {
             onLongPress: () {
               //some sort of confirmation dialog
               setState(() {
-                conts.removeAt(index);
-                Contacts().write(conts);
+                Contacts().rm(conts[index]);
                 setState(() {});
               });
             }
