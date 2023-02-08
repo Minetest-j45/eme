@@ -63,7 +63,8 @@ class _HomePageState extends State<HomePage> {
             TextButton(
                 child: const Text('Add basic testing contact'),
                 onPressed: () {
-                  Contacts().add(Contact(name: 'Bob', pub: '123'));
+                  Contacts().add(
+                      Contact(name: 'Bob', pub: '123', linked_identity: 'joe'));
                   setState(() {});
                 }),
             TextButton(

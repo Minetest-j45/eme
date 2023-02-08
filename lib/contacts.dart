@@ -5,8 +5,10 @@ import 'storage.dart';
 class Contact {
   String name;
   String pub;
+  String linked_identity;
 
-  Contact({required this.name, required this.pub});
+  Contact(
+      {required this.name, required this.pub, required this.linked_identity});
 }
 
 class Contacts {
@@ -19,7 +21,10 @@ class Contacts {
 
     List<Contact> contacts = [];
     for (var cont in json['contacts']) {
-      contacts.add(Contact(name: cont['name'], pub: cont['pub']));
+      contacts.add(Contact(
+          name: cont['name'],
+          pub: cont['pub'],
+          linked_identity: cont['linked_identity']));
     }
 
     return contacts;
@@ -31,6 +36,7 @@ class Contacts {
           .map((contact) => {
                 'name': contact.name,
                 'pub': contact.pub,
+                'linked_identity': contact.linked_identity,
               })
           .toList(),
     });
