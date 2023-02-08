@@ -27,7 +27,7 @@ class _NewContactPageState extends State<NewContactPage> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: DropdownButton(
-        //borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10),
         value: _selectedIdentity == "" ? null : _selectedIdentity,
         hint: SizedBox(
             width: MediaQuery.of(context).size.width * 0.65,
