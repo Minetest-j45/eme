@@ -5,10 +5,10 @@ import 'storage.dart';
 class Contact {
   String name;
   String pub;
-  String linked_identity;
+  String linkedIdentity;
 
   Contact(
-      {required this.name, required this.pub, required this.linked_identity});
+      {required this.name, required this.pub, required this.linkedIdentity});
 }
 
 class Contacts {
@@ -24,7 +24,7 @@ class Contacts {
       contacts.add(Contact(
           name: cont['name'],
           pub: cont['pub'],
-          linked_identity: cont['linked_identity']));
+          linkedIdentity: cont['linked_identity']));
     }
 
     return contacts;
@@ -36,7 +36,7 @@ class Contacts {
           .map((contact) => {
                 'name': contact.name,
                 'pub': contact.pub,
-                'linked_identity': contact.linked_identity,
+                'linked_identity': contact.linkedIdentity,
               })
           .toList(),
     });
@@ -55,7 +55,7 @@ class Contacts {
     for (var cont in contacts) {
       if ((cont.name == contact.name) &&
           (cont.pub == contact.pub) &&
-          (cont.linked_identity == contact.linked_identity)) {
+          (cont.linkedIdentity == contact.linkedIdentity)) {
         contacts.remove(cont);
         _write(contacts);
         break;

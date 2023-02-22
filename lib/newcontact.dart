@@ -145,7 +145,7 @@ class _NewContactPageState extends State<NewContactPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const NewContactPage()),
+                          builder: (context) => const QRScanPage()),
                     );
                   });
                 } else if (_toggleIndex == 1) {
@@ -156,9 +156,9 @@ class _NewContactPageState extends State<NewContactPage> {
                       MaterialPageRoute(
                           builder: (context) => QrDisplayPage(
                                 name: _controller.value.text,
-                                pub: "",
-                                linked_identity: _selectedIdentity,
-                                toggle_index: 1,
+                                pub: "", //public key of other person
+                                linkedIdentity: _selectedIdentity,
+                                toggleIndex: 1,
                               )),
                     );
                   });

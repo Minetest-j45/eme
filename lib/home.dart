@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
             title: Text(conts[index].name),
             //do subtitle hash of key in future
             subtitle: Text(Adler32.str(conts[index].pub).toString()),
-            trailing: Icon(Icons.more_vert),
+            trailing: const Icon(Icons.more_vert),
             onLongPress: () {
               //some sort of confirmation dialog
               setState(() {
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                 child: const Text('Add basic testing contact'),
                 onPressed: () {
                   Contacts().add(
-                      Contact(name: 'Bob', pub: '123', linked_identity: 'joe'));
+                      Contact(name: 'Bob', pub: '123', linkedIdentity: 'joe'));
                   setState(() {});
                 }),
             TextButton(
