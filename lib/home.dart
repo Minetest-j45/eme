@@ -42,30 +42,29 @@ class _HomePageState extends State<HomePage> {
 
   Future<Widget> _identitiesList() async {
     List<Identity> identitiesArr = await Identities().read();
-    List<String> identitiesStrs = [];
-    for (var identity in identitiesArr) {
-      identitiesStrs.add(identity.name);
-    }
 
-    return ListView(
+    return ListView.builder(
+      itemCount: identitiesArr.length,
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      children: identitiesStrs.map((String value) {
+      itemBuilder: (context, index) {
         return ListTile(
-          title: Text(value),
+          title: Text(identitiesArr[index].name),
+          subtitle: Text(Adler32.str(identitiesArr[index].pub).toString()),
+          //todo: manage identities page on long press
           onTap: () {
             setState(() {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => HomePage(
-                          currIdentity: value,
+                          currIdentity: identitiesArr[index].name,
                         )),
               );
             });
           },
         );
-      }).toList(),
+      },
     );
   }
 
