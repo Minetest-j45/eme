@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 import 'identities.dart';
 
-class NewAccountPage extends StatefulWidget {
-  const NewAccountPage({super.key});
+class NewIdentityPage extends StatefulWidget {
+  const NewIdentityPage({super.key});
 
   @override
-  State<NewAccountPage> createState() => _NewAccountPageState();
+  State<NewIdentityPage> createState() => _NewIdentityPageState();
 }
 
-class _NewAccountPageState extends State<NewAccountPage> {
+class _NewIdentityPageState extends State<NewIdentityPage> {
   var _nameIsEmpty = "";
 
   @override

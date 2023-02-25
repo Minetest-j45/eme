@@ -16,8 +16,9 @@ class MyApp extends StatelessWidget {
         primarySwatch:
             Colors.purple, //todo: make all colours from colour scheme
       ),
-      //home: const NewContactPage(),
-      home: const HomePage(),
+      home: const HomePage(
+        currIdentity: "",
+      ),
     );
   }
 }

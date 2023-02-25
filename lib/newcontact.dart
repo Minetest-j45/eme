@@ -19,12 +19,13 @@ class _NewContactPageState extends State<NewContactPage> {
   var _toggleIndex;
   var _controller;
 
-  Future<Widget> _identitiesStrs() async {
+  Future<Widget> _identitiesDropDown() async {
     List<Identity> identitiesArr = await Identities().read();
     List<String> identitiesStrs = [];
     for (var identity in identitiesArr) {
       identitiesStrs.add(identity.name);
     }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: DropdownButton(
@@ -69,7 +70,7 @@ class _NewContactPageState extends State<NewContactPage> {
                 padding: EdgeInsets.all(width),
                 child: Column(children: <Widget>[
                   FutureBuilder(
-                    future: _identitiesStrs(),
+                    future: _identitiesDropDown(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return snapshot.data!;

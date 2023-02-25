@@ -75,7 +75,9 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomePage(),
+                      builder: (context) => HomePage(
+                        currIdentity: widget.linkedIdentity,
+                      ),
                     ),
                   );
                 } else if (widget.toggleIndex == 1) {
@@ -194,7 +196,9 @@ class _QRScanPageState extends State<QRScanPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomePage(),
+              builder: (context) => HomePage(
+                currIdentity: widget.linkedIdentity, //or empty string
+              ),
             ),
           );
         }
@@ -310,7 +314,9 @@ class _ManualAddPageState extends State<ManualAddPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HomePage(),
+                        builder: (context) => HomePage(
+                          currIdentity: widget.linkedIdentity,
+                        ),
                       ),
                     );
                   }
