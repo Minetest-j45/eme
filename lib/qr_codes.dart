@@ -173,13 +173,13 @@ class _QRScanPageState extends State<QRScanPage> {
       setState(() {
         result = scanData;
         print(result!.code);
-        //todo: checksum checking
+        //todo: checksum checking (on new confirmation page)
+        Contacts().add(Contact(
+            name: widget.name,
+            pub: result!.code.toString(),
+            linkedIdentity: widget.linkedIdentity));
         if (widget.toggleIndex == 0) {
           //they scanned first, so have to display now
-          Contacts().add(Contact(
-              name: widget.name,
-              pub: result!.code.toString(),
-              linkedIdentity: widget.linkedIdentity));
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -191,10 +191,6 @@ class _QRScanPageState extends State<QRScanPage> {
           );
         } else if (widget.toggleIndex == 1) {
           //they displayed first, so are finished
-          Contacts().add(Contact(
-              name: widget.name,
-              pub: result!.code.toString(),
-              linkedIdentity: widget.linkedIdentity));
           Navigator.push(
             context,
             MaterialPageRoute(
