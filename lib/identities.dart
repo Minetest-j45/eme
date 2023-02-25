@@ -16,6 +16,7 @@ class Identities {
 
   //format: name|
   Future<List<Identity>> read() async {
+    //Storage().write('identities', '');//used to clear identities
     var raw = await Storage().read('identities');
 
     if (raw == '') {

@@ -18,19 +18,30 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<Widget> _contactList() async {
     List<Contact> conts = await Contacts().read();
+    List<Contact> filtered = [];
+    if (widget.currIdentity != "") {
+      for (var cont in conts) {
+        if (cont.linkedIdentity == widget.currIdentity) {
+          filtered.add(cont);
+        }
+      }
+    } else {
+      filtered = conts;
+    }
+
     return ListView.builder(
-      itemCount: conts.length,
+      itemCount: filtered.length,
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
-            title: Text(conts[index].name),
-            subtitle: Text(Adler32.str(conts[index].pub).toString()),
+            title: Text(filtered[index].name),
+            subtitle: Text(Adler32.str(filtered[index].pub).toString()),
             trailing: const Icon(Icons.more_vert),
             onLongPress: () {
               //some sort of confirmation dialog
               setState(() {
-                Contacts().rm(conts[index]);
+                Contacts().rm(filtered[index]);
                 setState(() {});
               });
             }
@@ -147,8 +158,8 @@ class _HomePageState extends State<HomePage> {
             TextButton(
                 child: const Text('Add basic testing contact'),
                 onPressed: () {
-                  Contacts().add(
-                      Contact(name: 'Bob', pub: '123', linkedIdentity: 'joe'));
+                  Contacts().add(Contact(
+                      name: 'Mario', pub: '1234', linkedIdentity: 'joe'));
                   setState(() {});
                 }),
             TextButton(

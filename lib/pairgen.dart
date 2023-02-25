@@ -1,6 +1,7 @@
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 
+import 'home.dart';
 import 'identities.dart';
 
 class NewIdentityPage extends StatefulWidget {
@@ -70,9 +71,14 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     name: nameController.value.text,
                     pub: pair.publicKey,
                     priv: pair.privateKey));
-                //setState(() {
-                //_HomePageState();
-                //});
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(
+                      currIdentity: "",
+                    ),
+                  ),
+                );
               },
             ),
             TextButton(
