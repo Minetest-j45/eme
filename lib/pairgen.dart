@@ -71,14 +71,17 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     name: nameController.value.text,
                     pub: pair.publicKey,
                     priv: pair.privateKey));
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(
-                      currIdentity: "",
+
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(
+                        currIdentity: "",
+                      ),
                     ),
-                  ),
-                );
+                  );
+                });
               },
             ),
             TextButton(

@@ -84,6 +84,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('EME'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              /*setState(() {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsPage()),
+                );
+              });*/
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
           child: ListView(children: <Widget>[

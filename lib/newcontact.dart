@@ -15,9 +15,9 @@ class NewContactPage extends StatefulWidget {
 class _NewContactPageState extends State<NewContactPage> {
   var _selectedIdentity = "";
   var _error = "No errors so far";
-  var _newName = "";
+  final String _newName = "";
   var _toggleIndex;
-  var _controller;
+  late TextEditingController _controller;
 
   Future<Widget> _identitiesDropDown() async {
     List<Identity> identitiesArr = await Identities().read();

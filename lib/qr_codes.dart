@@ -60,14 +60,6 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
               size: MediaQuery.of(context).size.width,
             ),
             TextButton(
-              child: const Text('Back'),
-              onPressed: () {
-                setState(() {
-                  Navigator.pop(context);
-                });
-              },
-            ),
-            TextButton(
               child: const Text('Next'),
               onPressed: () {
                 if (widget.toggleIndex == 0) {
@@ -283,14 +275,6 @@ class _ManualAddPageState extends State<ManualAddPage> {
                 ),
               ),
               TextButton(
-                child: const Text('Back'),
-                onPressed: () {
-                  setState(() {
-                    Navigator.pop(context);
-                  });
-                },
-              ),
-              TextButton(
                 child: const Text('Next'),
                 onPressed: () {
                   Contacts().add(Contact(
@@ -300,25 +284,29 @@ class _ManualAddPageState extends State<ManualAddPage> {
 
                   if (widget.toggleIndex == 0) {
                     //they scanned first, so have to display now
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QrDisplayPage(
-                            name: widget.name,
-                            linkedIdentity: widget.linkedIdentity,
-                            toggleIndex: widget.toggleIndex),
-                      ),
-                    );
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QrDisplayPage(
+                              name: widget.name,
+                              linkedIdentity: widget.linkedIdentity,
+                              toggleIndex: widget.toggleIndex),
+                        ),
+                      );
+                    });
                   } else if (widget.toggleIndex == 1) {
                     //they displayed first, so are finished
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(
-                          currIdentity: widget.linkedIdentity,
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(
+                            currIdentity: widget.linkedIdentity,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    });
                   }
                 },
               )
