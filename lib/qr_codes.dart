@@ -1,4 +1,5 @@
 import 'package:app_settings/app_settings.dart';
+import 'package:eme/home.dart';
 import 'package:eme/identities.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -9,13 +10,11 @@ import 'contacts.dart';
 class QrDisplayPage extends StatefulWidget {
   const QrDisplayPage(
       {super.key,
-      required this.pub,
       required this.name,
       required this.linkedIdentity,
       required this.toggleIndex});
 
   final String name;
-  final String pub;
   final String linkedIdentity;
   final int toggleIndex;
 
@@ -73,13 +72,23 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
               onPressed: () {
                 if (widget.toggleIndex == 0) {
                   //they scanned first, so are finished
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ),
+                  );
                 } else if (widget.toggleIndex == 1) {
                   //they displayed first, so they have to scan now
-                  Contacts().add(Contact(
-                      name: widget.name,
-                      pub: widget.pub,
-                      linkedIdentity: widget.linkedIdentity));
-                  //todo: go to home page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QRScanPage(
+                          name: widget.name,
+                          linkedIdentity: widget.linkedIdentity,
+                          toggleIndex: widget.toggleIndex),
+                    ),
+                  );
                 }
               },
             )
@@ -91,7 +100,15 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
 }
 
 class QRScanPage extends StatefulWidget {
-  const QRScanPage({Key? key}) : super(key: key);
+  const QRScanPage(
+      {super.key,
+      required this.name,
+      required this.linkedIdentity,
+      required this.toggleIndex});
+
+  final String name;
+  final String linkedIdentity;
+  final int toggleIndex;
 
   @override
   State<StatefulWidget> createState() => _QRScanPageState();
@@ -156,6 +173,35 @@ class _QRScanPageState extends State<QRScanPage> {
       setState(() {
         result = scanData;
         print(result!.code);
+        //todo: checksum checking
+        if (widget.toggleIndex == 0) {
+          //they scanned first, so have to display now
+          Contacts().add(Contact(
+              name: widget.name,
+              pub: result!.code.toString(),
+              linkedIdentity: widget.linkedIdentity));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QrDisplayPage(
+                  name: widget.name,
+                  linkedIdentity: widget.linkedIdentity,
+                  toggleIndex: widget.toggleIndex),
+            ),
+          );
+        } else if (widget.toggleIndex == 1) {
+          //they displayed first, so are finished
+          Contacts().add(Contact(
+              name: widget.name,
+              pub: result!.code.toString(),
+              linkedIdentity: widget.linkedIdentity));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
+        }
       });
     });
   }
@@ -172,14 +218,22 @@ class _QRScanPageState extends State<QRScanPage> {
           builder: (context) => AlertDialog(
                 title: const Text('Camera permission required'),
                 content: const Text(
-                    'Please allow camera access in your settings to scan QR codes.'),
+                    'Please allow camera access in your settings to scan the QR code containing the public key of the person you want to add to your contacts.'),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Open settings'),
+                    child: const Text('Manually paste the public key instead'),
                     onPressed: () {
                       _isDialogShowing = false;
-                      AppSettings.openAppSettings();
+
                       Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Open settings to allow camera access'),
+                    onPressed: () {
+                      AppSettings.openAppSettings();
+                      _isDialogShowing = false;
+                      //make it not display the dialog when they come back
                     },
                   )
                 ],
@@ -191,5 +245,83 @@ class _QRScanPageState extends State<QRScanPage> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+}
+
+class ManualAddPage extends StatefulWidget {
+  const ManualAddPage(
+      {super.key,
+      required this.name,
+      required this.linkedIdentity,
+      required this.toggleIndex});
+
+  final String name;
+  final String linkedIdentity;
+  final int toggleIndex;
+
+  @override
+  State<StatefulWidget> createState() => _ManualAddPageState();
+}
+
+class _ManualAddPageState extends State<ManualAddPage> {
+  final _pubController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("EME"),
+      ),
+      body: Center(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextFormField(
+                controller: _pubController,
+                decoration: const InputDecoration(
+                  hintText: 'Paste the public key here',
+                ),
+              ),
+              TextButton(
+                child: const Text('Back'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+              TextButton(
+                child: const Text('Next'),
+                onPressed: () {
+                  Contacts().add(Contact(
+                      name: widget.name,
+                      pub: _pubController.text,
+                      linkedIdentity: widget.linkedIdentity));
+
+                  if (widget.toggleIndex == 0) {
+                    //they scanned first, so have to display now
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QrDisplayPage(
+                            name: widget.name,
+                            linkedIdentity: widget.linkedIdentity,
+                            toggleIndex: widget.toggleIndex),
+                      ),
+                    );
+                  } else if (widget.toggleIndex == 1) {
+                    //they displayed first, so are finished
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(),
+                      ),
+                    );
+                  }
+                },
+              )
+            ]),
+      ),
+    );
   }
 }
