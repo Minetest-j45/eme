@@ -75,4 +75,15 @@ class Identities {
     }
     await Storage().write('identities', '');
   }
+
+  Future<Identity?> get(String name) async {
+    var identities = await read();
+    for (var identity in identities) {
+      if (identity.name == name) {
+        return identity;
+      }
+    }
+
+    return null;
+  }
 }

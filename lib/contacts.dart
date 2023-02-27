@@ -62,4 +62,15 @@ class Contacts {
       }
     }
   }
+
+  Future<Contact?> get(String name) async {
+    var contacts = await read();
+    for (var cont in contacts) {
+      if (cont.name == name) {
+        return cont;
+      }
+    }
+
+    return null;
+  }
 }

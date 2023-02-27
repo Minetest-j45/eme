@@ -64,25 +64,29 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
               onPressed: () {
                 if (widget.toggleIndex == 0) {
                   //they scanned first, so are finished
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(
-                        currIdentity: widget.linkedIdentity,
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(
+                          currIdentity: widget.linkedIdentity,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  });
                 } else if (widget.toggleIndex == 1) {
                   //they displayed first, so they have to scan now
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QRScanPage(
-                          name: widget.name,
-                          linkedIdentity: widget.linkedIdentity,
-                          toggleIndex: widget.toggleIndex),
-                    ),
-                  );
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QRScanPage(
+                            name: widget.name,
+                            linkedIdentity: widget.linkedIdentity,
+                            toggleIndex: widget.toggleIndex),
+                      ),
+                    );
+                  });
                 }
               },
             )
@@ -174,25 +178,29 @@ class _QRScanPageState extends State<QRScanPage> {
             linkedIdentity: widget.linkedIdentity));
         if (widget.toggleIndex == 0) {
           //they scanned first, so have to display now
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => QrDisplayPage(
-                  name: widget.name,
-                  linkedIdentity: widget.linkedIdentity,
-                  toggleIndex: widget.toggleIndex),
-            ),
-          );
+          setState(() {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => QrDisplayPage(
+                    name: widget.name,
+                    linkedIdentity: widget.linkedIdentity,
+                    toggleIndex: widget.toggleIndex),
+              ),
+            );
+          });
         } else if (widget.toggleIndex == 1) {
           //they displayed first, so are finished
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(
-                currIdentity: widget.linkedIdentity, //or empty string
+          setState(() {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(
+                  currIdentity: widget.linkedIdentity, //or empty string
+                ),
               ),
-            ),
-          );
+            );
+          });
         }
       });
     });
@@ -270,6 +278,7 @@ class _ManualAddPageState extends State<ManualAddPage> {
             children: <Widget>[
               TextFormField(
                 controller: _pubController,
+                maxLines: null,
                 decoration: const InputDecoration(
                   hintText: 'Paste the public key here',
                 ),
