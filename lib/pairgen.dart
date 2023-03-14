@@ -13,6 +13,8 @@ class NewIdentityPage extends StatefulWidget {
 
 class _NewIdentityPageState extends State<NewIdentityPage> {
   var _nameIsEmpty = "";
+  String _keySize = "4096";
+  List<String> keySizeOptions = <String>["2048", "3072", "4096"];
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,23 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     labelText: 'Enter the desired username for this identity *',
                   ),
                 )),
+            const Text(
+                "RSA key size: (2048 for lower end devices; 4096 for highest security; 3072 for somewhere inbetween)"),
+            DropdownButton(
+              items:
+                  keySizeOptions.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? value) {
+                setState(() {
+                  _keySize = value!;
+                });
+              },
+              value: _keySize,
+            ),
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.purple),
@@ -66,7 +85,9 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                   }
                 }
 
-                var pair = await RSA.generate(4096);
+                int keySize = int.parse(_keySize);
+
+                var pair = await RSA.generate(keySize);
                 Identities().add(Identity(
                     name: nameController.value.text,
                     pub: pair.publicKey,
@@ -82,21 +103,6 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     ),
                   );
                 });
-              },
-            ),
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.purple),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-              child: const Text('Display saved pairs'),
-              onPressed: () async {
-                var identities = await Identities().read();
-                for (var i in identities) {
-                  print(i.name);
-                  print(i.pub);
-                  print(i.priv);
-                }
               },
             ),
           ],
