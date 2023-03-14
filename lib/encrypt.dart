@@ -75,7 +75,7 @@ class _EncryptPageState extends State<EncryptPage> {
                     }),
               ),
               maxLines: null,
-              enabled: false,
+              readOnly: true,
             ),
             TextButton(
               child: const Text("Done"),
