@@ -77,7 +77,6 @@ class _HomePageState extends State<HomePage>
           subtitle: Text(Adler32.str(identitiesArr[index].pub).toString()),
           //todo: manage identities page on long press
           onTap: () {
-            print(identitiesArr[index].name);
             setState(() {
               Navigator.push(
                 context,
@@ -303,9 +302,6 @@ class _HomePageState extends State<HomePage>
                   child: const Text('Decrypt'),
                   onPressed: () async {
                     Identity? id = await Identities().get(widget.currIdentity);
-
-                    /*var encrypted = await RSA.encryptOAEP(
-                      _rawController.text, "", Hash.SHA256, ctact.pub);*/
 
                     var decrypted = await RSA.decryptOAEP(
                         _rawController.text, "", Hash.SHA256, id!.priv);

@@ -170,7 +170,6 @@ class _QRScanPageState extends State<QRScanPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        print(result!.code);
         //todo: checksum checking (on new confirmation page)
         Contacts().add(Contact(
             name: widget.name,

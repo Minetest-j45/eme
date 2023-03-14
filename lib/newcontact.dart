@@ -16,7 +16,7 @@ class _NewContactPageState extends State<NewContactPage> {
   var _selectedIdentity = "";
   var _error = "No errors so far";
   final String _newName = "";
-  var _toggleIndex;
+  late int? _toggleIndex;
   late TextEditingController _controller;
 
   Future<Widget> _identitiesDropDown() async {

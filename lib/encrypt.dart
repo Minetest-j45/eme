@@ -57,8 +57,6 @@ class _EncryptPageState extends State<EncryptPage> {
                   var encrypted = await RSA.encryptOAEP(
                       _rawController.text, "", Hash.SHA256, ctact.pub);
 
-                  print(encrypted);
-
                   setState(() {
                     _encryptedController.text = encrypted;
                   });
