@@ -205,47 +205,21 @@ class _QRScanPageState extends State<QRScanPage> {
     });
   }
 
+  bool manual = false;
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
-    if (!p) {
-      if (_isDialogShowing) {
-        return;
-      }
-      _isDialogShowing = true;
-
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text('Camera permission required'),
-                content: const Text(
-                    'Please allow camera access in your settings to scan the QR code containing the public key of the person you want to add to your contacts.'),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('Manually paste the public key instead'),
-                    onPressed: () {
-                      _isDialogShowing = false;
-
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ManualAddPage(
-                                  name: widget.name,
-                                  linkedIdentity: widget.linkedIdentity,
-                                  toggleIndex: widget.toggleIndex)),
-                        );
-                      });
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('Open settings to allow camera access'),
-                    onPressed: () {
-                      AppSettings.openAppSettings();
-                      _isDialogShowing = false;
-                      //make it not display the dialog when they come back
-                    },
-                  )
-                ],
-              ));
+    if (!p && !manual) {
+      manual = true;
+      setState(() {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ManualAddPage(
+                  name: widget.name,
+                  linkedIdentity: widget.linkedIdentity,
+                  toggleIndex: widget.toggleIndex)),
+        );
+      });
     }
   }
 
@@ -284,6 +258,31 @@ class _ManualAddPageState extends State<ManualAddPage> {
           child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(children: <Widget>[
+          TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.purple),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+              ),
+              onPressed: () => AppSettings.openAppSettings(),
+              child: const Text(
+                  "Go to settings and enable camera permissions to allow for QR code scanning")),
+          TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.purple),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+              ),
+              onPressed: () => setState(() {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => QRScanPage(
+                              name: widget.name,
+                              linkedIdentity: widget.linkedIdentity,
+                              toggleIndex: widget.toggleIndex)),
+                    );
+                  }),
+              child: const Text("Try scanning QR codes again")),
           TextFormField(
             controller: _pubController,
             maxLines: null,

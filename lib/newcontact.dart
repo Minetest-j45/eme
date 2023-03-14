@@ -16,7 +16,7 @@ class _NewContactPageState extends State<NewContactPage> {
   var _selectedIdentity = "";
   var _error = "No errors so far";
   final String _newName = "";
-  late int? _toggleIndex;
+  var _toggleIndex;
   late TextEditingController _controller;
 
   Future<Widget> _identitiesDropDown() async {
@@ -32,7 +32,7 @@ class _NewContactPageState extends State<NewContactPage> {
         borderRadius: BorderRadius.circular(10),
         value: _selectedIdentity == "" ? null : _selectedIdentity,
         hint: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.65,
+            width: MediaQuery.of(context).size.width * 0.7,
             child: const Text("Identity to relate this new contact to")),
         items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
