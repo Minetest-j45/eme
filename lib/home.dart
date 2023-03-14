@@ -2,6 +2,7 @@ import 'package:adler32/adler32.dart';
 import 'package:flutter/material.dart';
 
 import 'contacts.dart';
+import 'encrypt.dart';
 import 'identities.dart';
 import 'newcontact.dart';
 import 'pairgen.dart';
@@ -35,18 +36,27 @@ class _HomePageState extends State<HomePage> {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
-            title: Text(filtered[index].name),
-            subtitle: Text(Adler32.str(filtered[index].pub).toString()),
-            trailing: const Icon(Icons.more_vert),
-            onLongPress: () {
-              //some sort of confirmation dialog
-              setState(() {
-                Contacts().rm(filtered[index]);
-                setState(() {});
-              });
-            }
-            //onTap: encrypt to
+          title: Text(filtered[index].name),
+          subtitle: Text(Adler32.str(filtered[index].pub).toString()),
+          trailing: const Icon(Icons.more_vert),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EncryptPage(
+                        currContact: filtered[index].name,
+                        currIdentity: widget.currIdentity,
+                      )),
             );
+          },
+          onLongPress: () {
+            //some sort of confirmation dialog
+            setState(() {
+              Contacts().rm(filtered[index]);
+              setState(() {});
+            });
+          },
+        );
       },
     );
   }
@@ -114,7 +124,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         ListTile(
-          title: const Text('All Identities'),
+          title: const Text('All identities'),
           onTap: () {
             setState(() {
               Navigator.push(
@@ -123,6 +133,30 @@ class _HomePageState extends State<HomePage> {
                     builder: (context) => const HomePage(
                           currIdentity: "",
                         )),
+              );
+            });
+          },
+        ),
+        /*ListTile(
+          title: const Text('Manage identities'),
+          onTap: () {
+            setState(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ManageIdentitiesPage()),
+              );
+            });
+          },
+        ),*/
+        ListTile(
+          title: const Text('Add new identity'),
+          onTap: () {
+            setState(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const NewIdentityPage()),
               );
             });
           },
@@ -137,18 +171,6 @@ class _HomePageState extends State<HomePage> {
             }
 
             return const CircularProgressIndicator();
-          },
-        ),
-        ListTile(
-          title: const Text('Add new identity'),
-          onTap: () {
-            setState(() {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const NewIdentityPage()),
-              );
-            });
           },
         ),
       ])),

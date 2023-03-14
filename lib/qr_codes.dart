@@ -225,7 +225,16 @@ class _QRScanPageState extends State<QRScanPage> {
                     onPressed: () {
                       _isDialogShowing = false;
 
-                      Navigator.of(context).pop();
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ManualAddPage(
+                                  name: widget.name,
+                                  linkedIdentity: widget.linkedIdentity,
+                                  toggleIndex: widget.toggleIndex)),
+                        );
+                      });
                     },
                   ),
                   TextButton(
@@ -273,54 +282,54 @@ class _ManualAddPageState extends State<ManualAddPage> {
         title: const Text("EME"),
       ),
       body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                controller: _pubController,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'Paste the public key here',
-                ),
-              ),
-              TextButton(
-                child: const Text('Next'),
-                onPressed: () {
-                  Contacts().add(Contact(
-                      name: widget.name,
-                      pub: _pubController.text,
-                      linkedIdentity: widget.linkedIdentity));
+          child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(children: <Widget>[
+          TextFormField(
+            controller: _pubController,
+            maxLines: null,
+            decoration: const InputDecoration(
+              hintText: 'Paste the public key here',
+            ),
+          ),
+          TextButton(
+            child: const Text('Next'),
+            onPressed: () {
+              Contacts().add(Contact(
+                  name: widget.name,
+                  pub: _pubController.text,
+                  linkedIdentity: widget.linkedIdentity));
 
-                  if (widget.toggleIndex == 0) {
-                    //they scanned first, so have to display now
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QrDisplayPage(
-                              name: widget.name,
-                              linkedIdentity: widget.linkedIdentity,
-                              toggleIndex: widget.toggleIndex),
-                        ),
-                      );
-                    });
-                  } else if (widget.toggleIndex == 1) {
-                    //they displayed first, so are finished
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            currIdentity: widget.linkedIdentity,
-                          ),
-                        ),
-                      );
-                    });
-                  }
-                },
-              )
-            ]),
-      ),
+              if (widget.toggleIndex == 0) {
+                //they scanned first, so have to display now
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QrDisplayPage(
+                          name: widget.name,
+                          linkedIdentity: widget.linkedIdentity,
+                          toggleIndex: widget.toggleIndex),
+                    ),
+                  );
+                });
+              } else if (widget.toggleIndex == 1) {
+                //they displayed first, so are finished
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(
+                        currIdentity: widget.linkedIdentity,
+                      ),
+                    ),
+                  );
+                });
+              }
+            },
+          )
+        ]),
+      )),
     );
   }
 }

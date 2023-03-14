@@ -44,6 +44,7 @@ class _EncryptPageState extends State<EncryptPage> {
                     },
                   )),
               maxLines: null,
+              keyboardType: TextInputType.multiline,
             ),
             TextButton(
                 child: const Text('Encrypt'),
@@ -55,6 +56,8 @@ class _EncryptPageState extends State<EncryptPage> {
 
                   var encrypted = await RSA.encryptOAEP(
                       _rawController.text, "", Hash.SHA256, ctact.pub);
+
+                  print(encrypted);
 
                   setState(() {
                     _encryptedController.text = encrypted;
@@ -75,7 +78,7 @@ class _EncryptPageState extends State<EncryptPage> {
               enabled: false,
             ),
             TextButton(
-              child: Text("Done"),
+              child: const Text("Done"),
               onPressed: () {
                 setState(() {
                   Navigator.push(
