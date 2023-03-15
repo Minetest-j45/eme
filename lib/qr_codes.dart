@@ -1,4 +1,5 @@
 import 'package:app_settings/app_settings.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:eme/home.dart';
 import 'package:eme/identities.dart';
 import 'package:flutter/material.dart';
@@ -52,13 +53,18 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'Scan the following:',
+              'Scan (or copy and send) the following:',
             ),
             QrImage(
               data: _identityPub,
               version: QrVersions.auto,
               size: MediaQuery.of(context).size.width,
             ),
+            ElevatedButton(
+                onPressed: () {
+                  FlutterClipboard.copy(_identityPub);
+                },
+                child: Icon(Icons.copy)),
             TextButton(
               child: const Text('Next'),
               onPressed: () {
@@ -135,12 +141,16 @@ class _QRScanPageState extends State<QRScanPage> {
             flex: 1,
             child: FittedBox(
               fit: BoxFit.contain,
-              child: ElevatedButton(
-                  onPressed: () async {
-                    await controller?.flipCamera();
-                    setState(() {});
-                  },
-                  child: const Text('Flip camera')),
+              child: Row(
+                children: <Widget>[
+                  ElevatedButton(
+                      onPressed: () async {
+                        await controller?.flipCamera();
+                        setState(() {});
+                      },
+                      child: const Text('Flip camera')),
+                ],
+              ),
             ),
           )
         ],
