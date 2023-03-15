@@ -154,6 +154,34 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
     );
   }
 
+  void _confirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text(
+              "Are you sure you want to delete all your identities?"),
+          content: const Text("This action CANNOT be undone"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  setState(() {});
+
+                  Identities().rmAll();
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Yes")),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("No")),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,6 +204,15 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                 return const CircularProgressIndicator();
               },
             ),
+            TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.red),
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                ),
+                onPressed: () {
+                  _confirmation(context);
+                },
+                child: const Text("Delete all my identities"))
           ],
         ),
       ),

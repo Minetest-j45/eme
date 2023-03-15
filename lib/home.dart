@@ -212,15 +212,6 @@ class _HomePageState extends State<HomePage>
                   },
                 ),
                 TextButton(
-                  //TODO move to settings (delete all option) or/and manage identities
-                  child: const Text('Delete all identities'),
-                  onPressed: () {
-                    setState(() {
-                      Identities().rmAll();
-                    });
-                  },
-                ),
-                TextButton(
                   child: const Text('Add new identity'),
                   onPressed: () {
                     setState(() {
