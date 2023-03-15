@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'contacts.dart';
 import 'encrypt.dart';
 import 'identities.dart';
+import 'ids.dart';
 import 'newcontact.dart';
-import 'pairgen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.currIdentity});
@@ -64,32 +64,43 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Future<Widget> _identitiesList() async {
+  Future<List<Widget>> _identitiesList() async {
     List<Identity> identitiesArr = await Identities().read();
 
-    return ListView.builder(
-      itemCount: identitiesArr.length,
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(identitiesArr[index].name),
-          subtitle: Text(Adler32.str(identitiesArr[index].pub).toString()),
+    List<Widget> textButtonList = [];
+
+    for (var id in identitiesArr) {
+      textButtonList.add(
+        TextButton(
           //todo: manage identities page on long press
-          onTap: () {
+          onPressed: () {
             setState(() {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => HomePage(
-                          currIdentity: identitiesArr[index].name,
+                          currIdentity: id.name,
                         )),
               );
             });
           },
-        );
-      },
-    );
+          child: Text.rich(
+            TextSpan(
+              text: id.name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              children: <TextSpan>[
+                TextSpan(
+                    text: "\n${Adler32.str(id.pub).toString()}",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w400, fontFamily: "monospace"))
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return textButtonList;
   }
 
   var _selectedIdentity = "";
@@ -155,79 +166,87 @@ class _HomePageState extends State<HomePage>
                 ),
               ])),
           drawer: Drawer(
-              child: ListView(children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.purple,
-              ),
-              child: Text(
-                'My Identities',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+              child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.purple,
+                  ),
+                  child: Text(
+                    'My Identities',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            ListTile(
-              title: const Text('All identities'),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const HomePage(
-                              currIdentity: "",
-                            )),
-                  );
-                });
-              },
-            ),
-            /*ListTile(
-          title: const Text('Manage identities'),
-          onTap: () {
-            setState(() {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ManageIdentitiesPage()),
-              );
-            });
-          },
-        ),*/
-            ListTile(
-              //TODO move to settings (delete all option) or/and manage identities
-              title: const Text('Delete all identities'),
-              onTap: () {
-                setState(() {
-                  Identities().rmAll();
-                });
-              },
-            ),
-            ListTile(
-              title: const Text('Add new identity'),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const NewIdentityPage()),
-                  );
-                });
-              },
-            ),
-            FutureBuilder(
-              future: _identitiesList(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
+                TextButton(
+                  child: const Text('All identities'),
+                  onPressed: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage(
+                                  currIdentity: "",
+                                )),
+                      );
+                    });
+                  },
+                ),
+                TextButton(
+                  child: const Text('Manage identities'),
+                  onPressed: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ManageIdentitiesPage()),
+                      );
+                    });
+                  },
+                ),
+                TextButton(
+                  //TODO move to settings (delete all option) or/and manage identities
+                  child: const Text('Delete all identities'),
+                  onPressed: () {
+                    setState(() {
+                      Identities().rmAll();
+                    });
+                  },
+                ),
+                TextButton(
+                  child: const Text('Add new identity'),
+                  onPressed: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const NewIdentityPage()),
+                      );
+                    });
+                  },
+                ),
+                FutureBuilder(
+                  future: _identitiesList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        children: snapshot.data!,
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
 
-                return const CircularProgressIndicator();
-              },
+                    return const CircularProgressIndicator();
+                  },
+                ),
+              ],
             ),
-          ])),
+          )),
           body: TabBarView(children: [
             Center(
               child: Column(

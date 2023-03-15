@@ -60,10 +60,16 @@ class Identities {
 
   void rm(Identity identity) async {
     var identities = await read();
-    identities.remove(identity);
-    write(identities);
-    await _securestorage.delete(key: '${identity.name}_pub');
-    await _securestorage.delete(key: '${identity.name}_priv');
+
+    for (var id in identities) {
+      if (id.name == identity.name) {
+        identities.remove(id);
+        write(identities);
+        await _securestorage.delete(key: '${identity.name}_pub');
+        await _securestorage.delete(key: '${identity.name}_priv');
+        break;
+      }
+    }
   }
 
   void rmAll() async {

@@ -111,3 +111,74 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
     );
   }
 }
+
+class ManageIdentitiesPage extends StatefulWidget {
+  const ManageIdentitiesPage({super.key});
+
+  @override
+  State<ManageIdentitiesPage> createState() => _ManageIdentitiesPageState();
+}
+
+class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
+  Future<Widget> _identitiesList() async {
+    List<Identity> identitiesArr = await Identities().read();
+
+    return ListView.builder(
+      itemCount: identitiesArr.length,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(identitiesArr[index].name),
+          //todo: manage identities page on long press
+          onTap: () {
+            setState(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage(
+                          currIdentity: identitiesArr[index].name,
+                        )),
+              );
+            });
+          },
+          trailing: TextButton(
+            child: Icon(Icons.delete),
+            onPressed: () {
+              Identities().rm(identitiesArr[index]);
+              setState(() {});
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Generate a new keypair'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FutureBuilder(
+              future: _identitiesList(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+
+                return const CircularProgressIndicator();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
