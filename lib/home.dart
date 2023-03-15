@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Future<List<Widget>> _identitiesList() async {
+  Future<Widget> _identitiesList() async {
     List<Identity> identitiesArr = await Identities().read();
 
     List<Widget> textButtonList = [];
@@ -100,7 +100,9 @@ class _HomePageState extends State<HomePage>
       );
     }
 
-    return textButtonList;
+    return Column(
+      children: textButtonList,
+    );
   }
 
   var _selectedIdentity = "";
@@ -234,9 +236,7 @@ class _HomePageState extends State<HomePage>
                   future: _identitiesList(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Column(
-                        children: snapshot.data!,
-                      );
+                      return snapshot.data!;
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
                     }
