@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'contacts.dart';
+import 'newcontact.dart';
 
 class QrDisplayPage extends StatefulWidget {
   const QrDisplayPage(
@@ -27,7 +27,7 @@ class QrDisplayPage extends StatefulWidget {
 class _QrDisplayPageState extends State<QrDisplayPage> {
   String _identityPub = '';
 
-  void _getIdentites() async {
+  void _getPub() async {
     var id = await Identities().get(widget.linkedIdentity);
     _identityPub = id!.pub;
   }
@@ -35,7 +35,7 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
   @override
   void initState() {
     super.initState();
-    _getIdentites();
+    _getPub();
   }
 
   @override
@@ -192,14 +192,22 @@ class _QRScanPageState extends State<QRScanPage> {
     setState(() {
       this.controller = controller;
     });
+
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        //todo: checksum checking (on new confirmation page)
-        Contacts().add(Contact(
-            name: widget.name,
-            pub: result!.code.toString(),
-            linkedIdentity: widget.linkedIdentity));
+        setState(() {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConfirmContactPage(
+                name: widget.name,
+                linkedIdentity: widget.linkedIdentity,
+                theirPub: result!.code.toString(),
+              ),
+            ),
+          );
+        });
         if (widget.toggleIndex == 0) {
           //they scanned first, so have to display now
           setState(() {
@@ -318,10 +326,18 @@ class _ManualAddPageState extends State<ManualAddPage> {
           TextButton(
             child: const Text('Next'),
             onPressed: () {
-              Contacts().add(Contact(
-                  name: widget.name,
-                  pub: _pubController.text,
-                  linkedIdentity: widget.linkedIdentity));
+              setState(() {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ConfirmContactPage(
+                      name: widget.name,
+                      linkedIdentity: widget.linkedIdentity,
+                      theirPub: _pubController.text,
+                    ),
+                  ),
+                );
+              });
 
               if (widget.toggleIndex == 0) {
                 //they scanned first, so have to display now

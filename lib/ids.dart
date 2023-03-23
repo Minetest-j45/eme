@@ -130,18 +130,6 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(identitiesArr[index].name),
-          //todo: manage identities page on long press
-          onTap: () {
-            setState(() {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HomePage(
-                          currIdentity: identitiesArr[index].name,
-                        )),
-              );
-            });
-          },
           trailing: TextButton(
             child: Icon(Icons.delete),
             onPressed: () {

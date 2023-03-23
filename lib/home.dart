@@ -72,7 +72,6 @@ class _HomePageState extends State<HomePage>
     for (var id in identitiesArr) {
       textButtonList.add(
         TextButton(
-          //todo: manage identities page on long press
           onPressed: () {
             setState(() {
               Navigator.push(
@@ -256,13 +255,6 @@ class _HomePageState extends State<HomePage>
                       return const CircularProgressIndicator();
                     },
                   ),
-                  TextButton(
-                      child: const Text('Add basic testing contact'),
-                      onPressed: () {
-                        Contacts().add(Contact(
-                            name: 'Mario', pub: '1234', linkedIdentity: 'joe'));
-                        setState(() {});
-                      }),
                   TextButton(
                     child: const Text('Add new contact'),
                     onPressed: () {

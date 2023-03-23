@@ -1,3 +1,4 @@
+import 'package:adler32/adler32.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -168,6 +169,68 @@ class _NewContactPageState extends State<NewContactPage> {
                 }
               },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ConfirmContactPage extends StatefulWidget {
+  const ConfirmContactPage({
+    super.key,
+    required this.name,
+    required this.linkedIdentity,
+    required this.theirPub,
+  });
+
+  final String name;
+  final String linkedIdentity;
+  final String theirPub;
+
+  @override
+  State<ConfirmContactPage> createState() => _ConfirmContactPageState();
+}
+
+class _ConfirmContactPageState extends State<ConfirmContactPage> {
+  String _identityPub = '';
+
+  void _getPub() async {
+    var id = await Identities().get(widget.linkedIdentity);
+    _identityPub = id!.pub;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getPub();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Confirm new contact:'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("New contact name: ${widget.name}"),
+            Text("Linked identity: ${widget.linkedIdentity}"),
+            Text(
+                "My public key summary (hash): ${Adler32.str(_identityPub).toString()}"),
+            Text(
+                "Their public key summary (hash): ${Adler32.str(widget.theirPub).toString()}"),
+            TextButton(
+                onPressed: () {
+                  Contacts().add(Contact(
+                      name: widget.name,
+                      pub: widget.theirPub,
+                      linkedIdentity: widget.linkedIdentity));
+                },
+                child: Text("Confirm"))
+            //TODO: buttons: restart (go to NewContactPage), confirm (add contact, go home)
           ],
         ),
       ),
