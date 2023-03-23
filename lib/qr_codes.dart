@@ -1,3 +1,4 @@
+import 'package:adler32/adler32.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:eme/home.dart';
@@ -26,19 +27,14 @@ class QrDisplayPage extends StatefulWidget {
 class _QrDisplayPageState extends State<QrDisplayPage> {
   String _identityPub = '';
 
-  Future<void> _getIdentites() async {
-    var idList = await Identities().read();
-    for (var id in idList) {
-      if (id.name == widget.linkedIdentity) {
-        _identityPub = id.pub;
-      }
-    }
+  void _getIdentites() async {
+    var id = await Identities().get(widget.linkedIdentity);
+    _identityPub = id!.pub;
   }
 
   @override
   void initState() {
     super.initState();
-
     _getIdentites();
   }
 
@@ -60,6 +56,7 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
               version: QrVersions.auto,
               size: MediaQuery.of(context).size.width,
             ),
+            Text(Adler32.str(_identityPub).toString()),
             ElevatedButton(
                 onPressed: () {
                   FlutterClipboard.copy(_identityPub);
@@ -149,6 +146,24 @@ class _QRScanPageState extends State<QRScanPage> {
                         setState(() {});
                       },
                       child: const Text('Flip camera')),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.05,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ManualAddPage(
+                                    name: widget.name,
+                                    linkedIdentity: widget.linkedIdentity,
+                                    toggleIndex: widget.toggleIndex)),
+                          );
+                        });
+                      },
+                      child: const Text('Paste instead')),
                 ],
               ),
             ),
