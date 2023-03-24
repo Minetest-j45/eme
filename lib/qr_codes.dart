@@ -25,17 +25,27 @@ class QrDisplayPage extends StatefulWidget {
 }
 
 class _QrDisplayPageState extends State<QrDisplayPage> {
-  String _identityPub = '';
-
-  void _getPub() async {
+  Future<Widget> _qrImgLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
-    _identityPub = id!.pub;
-  }
+    var pub = id!.pub;
 
-  @override
-  void initState() {
-    super.initState();
-    _getPub();
+    print(pub);
+
+    return Column(
+      children: [
+        QrImage(
+          data: pub,
+          version: QrVersions.auto,
+          size: MediaQuery.of(context).size.width,
+        ),
+        Text(Adler32.str(pub).toString()),
+        ElevatedButton(
+            onPressed: () {
+              FlutterClipboard.copy(pub);
+            },
+            child: Icon(Icons.copy)),
+      ],
+    );
   }
 
   @override
@@ -51,17 +61,18 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
             const Text(
               'Scan (or copy and send) the following:',
             ),
-            QrImage(
-              data: _identityPub,
-              version: QrVersions.auto,
-              size: MediaQuery.of(context).size.width,
+            FutureBuilder(
+              future: _qrImgLoad(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+
+                return const CircularProgressIndicator();
+              },
             ),
-            Text(Adler32.str(_identityPub).toString()),
-            ElevatedButton(
-                onPressed: () {
-                  FlutterClipboard.copy(_identityPub);
-                },
-                child: Icon(Icons.copy)),
             TextButton(
               child: const Text('Next'),
               onPressed: () {

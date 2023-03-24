@@ -193,17 +193,11 @@ class ConfirmContactPage extends StatefulWidget {
 }
 
 class _ConfirmContactPageState extends State<ConfirmContactPage> {
-  String _identityPub = '';
-
-  void _getPub() async {
+  Future<Widget> _myHashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
-    _identityPub = id!.pub;
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    _getPub();
+    return Text(
+        "My public key summary (hash): ${Adler32.str(id!.pub).toString()}");
   }
 
   @override
@@ -218,8 +212,18 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
           children: <Widget>[
             Text("New contact name: ${widget.name}"),
             Text("Linked identity: ${widget.linkedIdentity}"),
-            Text(
-                "My public key summary (hash): ${Adler32.str(_identityPub).toString()}"),
+            FutureBuilder(
+              future: _myHashLoad(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+
+                return const CircularProgressIndicator();
+              },
+            ),
             Text(
                 "Their public key summary (hash): ${Adler32.str(widget.theirPub).toString()}"),
             TextButton(
@@ -229,6 +233,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                       pub: widget.theirPub,
                       linkedIdentity: widget.linkedIdentity));
                 },
+                //TODO: check if their public key is a valid one (actually is a public key)?
                 child: Text("Confirm"))
             //TODO: buttons: restart (go to NewContactPage), confirm (add contact, go home)
           ],
