@@ -1,4 +1,3 @@
-import 'package:adler32/adler32.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
@@ -33,14 +32,15 @@ class _HomePageState extends State<HomePage>
       filtered = conts;
     }
 
-    return ListView.builder(
+    return await ListView.builder(
       itemCount: filtered.length,
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(filtered[index].name),
-          subtitle: Text(Adler32.str(filtered[index].pub).toString()),
+          subtitle: Text(
+              await RSA.hash(filtered[index].pub, Hash.SHA256)),
           trailing: const Icon(Icons.more_vert),
           onTap: () {
             Navigator.push(
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage>
               style: const TextStyle(fontWeight: FontWeight.bold),
               children: <TextSpan>[
                 TextSpan(
-                    text: "\n${Adler32.str(id.pub).toString()}",
+                    text: "\n${await RSA.hash(id.pub, Hash.SHA256)}",
                     style: const TextStyle(
                         fontWeight: FontWeight.w400, fontFamily: "monospace"))
               ],

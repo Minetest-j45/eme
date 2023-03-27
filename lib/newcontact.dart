@@ -1,4 +1,4 @@
-import 'package:adler32/adler32.dart';
+import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -196,8 +196,12 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
   Future<Widget> _myHashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
 
-    return Text(
-        "My public key summary (hash): ${Adler32.str(id!.pub).toString()}");
+    return Column(children: [
+      Text(
+          "My public key summary (hash): ${await RSA.hash(id!.pub, Hash.SHA256)}"),
+      Text(
+          "Their public key summary (hash): ${await RSA.hash(widget.theirPub, Hash.SHA256)}"),
+    ]);
   }
 
   @override
@@ -224,8 +228,6 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                 return const CircularProgressIndicator();
               },
             ),
-            Text(
-                "Their public key summary (hash): ${Adler32.str(widget.theirPub).toString()}"),
             TextButton(
                 onPressed: () {
                   Contacts().add(Contact(
