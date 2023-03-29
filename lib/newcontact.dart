@@ -198,9 +198,9 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
 
     return Column(children: [
       Text(
-          "My public key summary (hash): ${await RSA.hash(id!.pub, Hash.SHA256)}"),
+          "My public key summary (hash): ${(await RSA.hash(id!.pub, Hash.SHA256)).substring(0, 7)}"),
       Text(
-          "Their public key summary (hash): ${await RSA.hash(widget.theirPub, Hash.SHA256)}"),
+          "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}"),
     ]);
   }
 

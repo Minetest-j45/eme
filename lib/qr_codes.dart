@@ -38,7 +38,7 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
           version: QrVersions.auto,
           size: MediaQuery.of(context).size.width,
         ),
-        Text(await RSA.hash(pub, Hash.SHA256)),
+        Text((await RSA.hash(pub, Hash.SHA256)).substring(0, 7)),
         ElevatedButton(
             onPressed: () {
               FlutterClipboard.copy(pub);

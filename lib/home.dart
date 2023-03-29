@@ -32,6 +32,11 @@ class _HomePageState extends State<HomePage>
       filtered = conts;
     }
 
+    List<String> hashedArr = [];
+    for (var cont in filtered) {
+      hashedArr.add((await RSA.hash(cont.pub, Hash.SHA256)).substring(0, 7));
+    }
+
     return await ListView.builder(
       itemCount: filtered.length,
       scrollDirection: Axis.vertical,
@@ -39,8 +44,7 @@ class _HomePageState extends State<HomePage>
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(filtered[index].name),
-          subtitle: Text(
-              await RSA.hash(filtered[index].pub, Hash.SHA256)),
+          subtitle: Text(hashedArr[index]),
           trailing: const Icon(Icons.more_vert),
           onTap: () {
             Navigator.push(
@@ -89,7 +93,8 @@ class _HomePageState extends State<HomePage>
               style: const TextStyle(fontWeight: FontWeight.bold),
               children: <TextSpan>[
                 TextSpan(
-                    text: "\n${await RSA.hash(id.pub, Hash.SHA256)}",
+                    text:
+                        "\n${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}",
                     style: const TextStyle(
                         fontWeight: FontWeight.w400, fontFamily: "monospace"))
               ],
