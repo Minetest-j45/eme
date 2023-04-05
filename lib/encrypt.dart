@@ -17,6 +17,7 @@ class EncryptPage extends StatefulWidget {
 }
 
 class _EncryptPageState extends State<EncryptPage> {
+  String _encryptErr = "";
   final _rawController = TextEditingController();
   final _encryptedController = TextEditingController();
 
@@ -30,6 +31,7 @@ class _EncryptPageState extends State<EncryptPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            //todo: dropdown menu, preset to the one they clicked on
             TextFormField(
               controller: _rawController,
               decoration: InputDecoration(
@@ -46,6 +48,10 @@ class _EncryptPageState extends State<EncryptPage> {
               maxLines: null,
               keyboardType: TextInputType.multiline,
             ),
+            Text(
+              _encryptErr,
+              style: const TextStyle(color: Colors.red),
+            ),
             TextButton(
                 child: const Text('Encrypt'),
                 onPressed: () async {
@@ -54,12 +60,19 @@ class _EncryptPageState extends State<EncryptPage> {
                     return;
                   }
 
-                  var encrypted = await RSA.encryptOAEP(
-                      _rawController.text, "", Hash.SHA256, ctact.pub);
+                  try {
+                    String encrypted = await RSA.encryptOAEP(
+                        _rawController.text, "", Hash.SHA256, ctact.pub);
 
-                  setState(() {
-                    _encryptedController.text = encrypted;
-                  });
+                    setState(() {
+                      _encryptedController.text = encrypted;
+                    });
+                  } on RSAException {
+                    _encryptErr =
+                        "*Encryption failed, please try again or try removing and readding this persons contact*";
+                    setState(() {});
+                    return;
+                  }
                 }),
             TextFormField(
               controller: _encryptedController,

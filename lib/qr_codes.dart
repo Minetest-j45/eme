@@ -29,8 +29,6 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
     var id = await Identities().get(widget.linkedIdentity);
     var pub = id!.pub;
 
-    print(pub);
-
     return Column(
       children: [
         QrImage(
@@ -43,7 +41,7 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
             onPressed: () {
               FlutterClipboard.copy(pub);
             },
-            child: Icon(Icons.copy)),
+            child: const Icon(Icons.copy)),
       ],
     );
   }
@@ -130,7 +128,6 @@ class _QRScanPageState extends State<QRScanPage> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  bool _isDialogShowing = false;
 
   @override
   void reassemble() {

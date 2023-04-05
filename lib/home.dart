@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage>
       hashedArr.add((await RSA.hash(cont.pub, Hash.SHA256)).substring(0, 7));
     }
 
-    return await ListView.builder(
+    return ListView.builder(
       itemCount: filtered.length,
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -253,7 +253,7 @@ class _HomePageState extends State<HomePage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Contacts for${nicename}'),
+                  Text('Contacts for$nicename'),
                   FutureBuilder(
                     future: _contactList(),
                     builder: (context, snapshot) {
@@ -275,6 +275,16 @@ class _HomePageState extends State<HomePage>
                           MaterialPageRoute(
                               builder: (context) => const NewContactPage()),
                         );
+                      });
+                    },
+                  ),
+                  FloatingActionButton(
+                    heroTag: "Test",
+                    child: const Icon(Icons.textsms_sharp),
+                    onPressed: () {
+                      setState(() {
+                        Contacts().add(Contact(
+                            name: "jeff", pub: "gbk", linkedIdentity: "guess"));
                       });
                     },
                   ),
@@ -313,7 +323,7 @@ class _HomePageState extends State<HomePage>
               ),
               Text(
                 _decryptErr,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
               TextButton(
                   child: const Text('Decrypt'),
@@ -321,7 +331,6 @@ class _HomePageState extends State<HomePage>
                     Identity? id = await Identities().get(_selectedIdentity) ??
                         await Identities().get(widget.currIdentity);
 
-                    print(id);
                     if (id == null) {
                       _decryptErr =
                           "*Please select an identity to use for decryption*";
@@ -331,11 +340,12 @@ class _HomePageState extends State<HomePage>
 
                     try {
                       String decrypted = await RSA.decryptOAEP(
-                          _rawController.text, "", Hash.SHA256, id!.priv);
+                          _rawController.text, "", Hash.SHA256, id.priv);
+
                       setState(() {
                         _decryptedController.text = decrypted;
                       });
-                    } on RSAException catch (e) {
+                    } on RSAException {
                       _decryptErr =
                           "*This doesnt seem to be a valid encrypted message*";
                       setState(() {});

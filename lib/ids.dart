@@ -131,7 +131,7 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
         return ListTile(
           title: Text(identitiesArr[index].name),
           trailing: TextButton(
-            child: Icon(Icons.delete),
+            child: const Icon(Icons.delete),
             onPressed: () {
               Identities().rm(identitiesArr[index]);
               setState(() {});
