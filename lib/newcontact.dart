@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'contacts.dart';
+import 'home.dart';
 import 'identities.dart';
 import 'qr_codes.dart';
 
@@ -229,15 +230,33 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
               },
             ),
             TextButton(
+              onPressed: () {
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NewContactPage()),
+                  );
+                });
+              },
+              child: const Text("Try again"),
+            ),
+            TextButton(
                 onPressed: () {
                   Contacts().add(Contact(
                       name: widget.name,
                       pub: widget.theirPub,
                       linkedIdentity: widget.linkedIdentity));
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const HomePage(currIdentity: "")),
+                    );
+                  });
                 },
-                //TODO: check if their public key is a valid one (actually is a public key)?
-                child: Text("Confirm"))
-            //TODO: buttons: restart (go to NewContactPage), confirm (add contact, go home)
+                child: const Text("Confirm")),
           ],
         ),
       ),

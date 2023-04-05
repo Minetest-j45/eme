@@ -19,6 +19,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  String _decryptErr = "";
+
   Future<Widget> _contactList() async {
     List<Contact> conts = await Contacts().read();
     List<Contact> filtered = [];
@@ -124,7 +126,7 @@ class _HomePageState extends State<HomePage>
         value: _selectedIdentity == "" ? null : _selectedIdentity,
         hint: SizedBox(
             width: MediaQuery.of(context).size.width * 0.65,
-            child: const Text("Identity to relate this new contact to")),
+            child: const Text("Identity to use for decryption")),
         items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
@@ -143,6 +145,10 @@ class _HomePageState extends State<HomePage>
   final _decryptedController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    String nicename = ": ${widget.currIdentity}";
+    if (widget.currIdentity == '') {
+      nicename = " all:";
+    }
     return MaterialApp(
         home: DefaultTabController(
       length: 2,
@@ -247,7 +253,7 @@ class _HomePageState extends State<HomePage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Text('Welcome to EME'),
+                  Text('Contacts for${nicename}'),
                   FutureBuilder(
                     future: _contactList(),
                     builder: (context, snapshot) {
@@ -260,8 +266,8 @@ class _HomePageState extends State<HomePage>
                       return const CircularProgressIndicator();
                     },
                   ),
-                  TextButton(
-                    child: const Text('Add new contact'),
+                  FloatingActionButton(
+                    child: const Icon(Icons.person_add_alt_1),
                     onPressed: () {
                       setState(() {
                         Navigator.push(
@@ -305,17 +311,36 @@ class _HomePageState extends State<HomePage>
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
               ),
+              Text(
+                _decryptErr,
+                style: TextStyle(color: Colors.red),
+              ),
               TextButton(
                   child: const Text('Decrypt'),
                   onPressed: () async {
-                    Identity? id = await Identities().get(widget.currIdentity);
+                    Identity? id = await Identities().get(_selectedIdentity) ??
+                        await Identities().get(widget.currIdentity);
 
-                    var decrypted = await RSA.decryptOAEP(
-                        _rawController.text, "", Hash.SHA256, id!.priv);
+                    print(id);
+                    if (id == null) {
+                      _decryptErr =
+                          "*Please select an identity to use for decryption*";
+                      setState(() {});
+                      return;
+                    }
 
-                    setState(() {
-                      _decryptedController.text = decrypted;
-                    });
+                    try {
+                      String decrypted = await RSA.decryptOAEP(
+                          _rawController.text, "", Hash.SHA256, id!.priv);
+                      setState(() {
+                        _decryptedController.text = decrypted;
+                      });
+                    } on RSAException catch (e) {
+                      _decryptErr =
+                          "*This doesnt seem to be a valid encrypted message*";
+                      setState(() {});
+                      return;
+                    }
                   }),
               TextFormField(
                 controller: _decryptedController,
