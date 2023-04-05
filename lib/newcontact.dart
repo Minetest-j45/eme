@@ -194,14 +194,26 @@ class ConfirmContactPage extends StatefulWidget {
 }
 
 class _ConfirmContactPageState extends State<ConfirmContactPage> {
-  Future<Widget> _myHashLoad() async {
+  late Color? _pubErr;
+  late String _err;
+
+  Future<Widget> _hashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
+
+    //test their public key
+    try {
+      await RSA.encryptOAEP("test", "", Hash.SHA256, widget.theirPub);
+    } on RSAException {
+      _pubErr = Colors.red;
+    }
 
     return Column(children: [
       Text(
           "My public key summary (hash): ${(await RSA.hash(id!.pub, Hash.SHA256)).substring(0, 7)}"),
       Text(
-          "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}"),
+        "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
+        style: TextStyle(color: _pubErr ?? Colors.black),
+      ),
     ]);
   }
 
@@ -218,7 +230,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
             Text("New contact name: ${widget.name}"),
             Text("Linked identity: ${widget.linkedIdentity}"),
             FutureBuilder(
-              future: _myHashLoad(),
+              future: _hashLoad(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return snapshot.data!;
@@ -239,10 +251,21 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                   );
                 });
               },
-              child: const Text("Try again"),
+              child: const Text("Start again"),
+            ),
+            Text(
+              _err,
+              style: const TextStyle(color: Colors.red),
             ),
             TextButton(
                 onPressed: () {
+                  if (_pubErr == Colors.red) {
+                    _err =
+                        "*There is a problem with their public key, please start again*";
+                    setState(() {});
+                    return;
+                  }
+
                   Contacts().add(Contact(
                       name: widget.name,
                       pub: widget.theirPub,
