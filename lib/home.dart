@@ -221,13 +221,13 @@ class _HomePageState extends State<HomePage>
                       child: Column(
                         children: <Widget>[
                           TextButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colours.slateGray)),
                             child: const Text(
                               'All identities',
                               style: TextStyle(color: Colours.mintCream),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colours.slateGray)),
                             onPressed: () {
                               setState(() {
                                 Navigator.push(
@@ -241,13 +241,13 @@ class _HomePageState extends State<HomePage>
                             },
                           ),
                           TextButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colours.slateGray)),
                             child: const Text(
                               'Manage identities',
                               style: TextStyle(color: Colours.mintCream),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colours.slateGray)),
                             onPressed: () {
                               setState(() {
                                 Navigator.push(
@@ -260,13 +260,13 @@ class _HomePageState extends State<HomePage>
                             },
                           ),
                           TextButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colours.slateGray)),
                             child: const Text(
                               'Add new identity',
                               style: TextStyle(color: Colours.mintCream),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colours.slateGray)),
                             onPressed: () {
                               setState(() {
                                 Navigator.push(
@@ -385,39 +385,40 @@ class _HomePageState extends State<HomePage>
                     style: const TextStyle(color: Colors.red),
                   ),
                   TextButton(
-                      child: const Text(
-                        'Decrypt',
-                        style: TextStyle(color: Colours.mintCream),
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colours.slateGray)),
-                      onPressed: () async {
-                        Identity? id =
-                            await Identities().get(_selectedIdentity) ??
-                                await Identities().get(widget.currIdentity);
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colours.slateGray)),
+                    onPressed: () async {
+                      Identity? id =
+                          await Identities().get(_selectedIdentity) ??
+                              await Identities().get(widget.currIdentity);
 
-                        if (id == null) {
-                          _decryptErr =
-                              "*Please select an identity to use for decryption*";
-                          setState(() {});
-                          return;
-                        }
+                      if (id == null) {
+                        _decryptErr =
+                            "*Please select an identity to use for decryption*";
+                        setState(() {});
+                        return;
+                      }
 
-                        try {
-                          String decrypted = await RSA.decryptOAEP(
-                              _rawController.text, "", Hash.SHA256, id.priv);
+                      try {
+                        String decrypted = await RSA.decryptOAEP(
+                            _rawController.text, "", Hash.SHA256, id.priv);
 
-                          setState(() {
-                            _decryptedController.text = decrypted;
-                          });
-                        } on RSAException {
-                          _decryptErr =
-                              "*This doesnt seem to be a valid encrypted message*";
-                          setState(() {});
-                          return;
-                        }
-                      }),
+                        setState(() {
+                          _decryptedController.text = decrypted;
+                        });
+                      } on RSAException {
+                        _decryptErr =
+                            "*This doesnt seem to be a valid encrypted message*";
+                        setState(() {});
+                        return;
+                      }
+                    },
+                    child: const Text(
+                      'Decrypt',
+                      style: TextStyle(color: Colours.mintCream),
+                    ),
+                  ),
                   TextFormField(
                     controller: _decryptedController,
                     decoration: InputDecoration(
@@ -442,10 +443,6 @@ class _HomePageState extends State<HomePage>
                     readOnly: true,
                   ),
                   TextButton(
-                    child: const Text(
-                      "Done",
-                      style: TextStyle(color: Colours.mintCream),
-                    ),
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colours.slateGray)),
@@ -461,6 +458,10 @@ class _HomePageState extends State<HomePage>
                         );
                       });
                     },
+                    child: const Text(
+                      "Done",
+                      style: TextStyle(color: Colours.mintCream),
+                    ),
                   )
                 ]),
               ])),
