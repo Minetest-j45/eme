@@ -2,6 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 
+import 'colours.dart';
 import 'contacts.dart';
 import 'encrypt.dart';
 import 'identities.dart';
@@ -47,7 +48,10 @@ class _HomePageState extends State<HomePage>
         return ListTile(
           title: Text(filtered[index].name),
           subtitle: Text(hashedArr[index]),
-          trailing: const Icon(Icons.more_vert),
+          trailing: const Icon(
+            Icons.more_vert,
+            color: Colours.slateGray,
+          ),
           onTap: () {
             Navigator.push(
               context,
@@ -92,7 +96,8 @@ class _HomePageState extends State<HomePage>
           child: Text.rich(
             TextSpan(
               text: id.name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colours.mintCream),
               children: <TextSpan>[
                 TextSpan(
                     text:
@@ -122,15 +127,23 @@ class _HomePageState extends State<HomePage>
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: DropdownButton(
+        dropdownColor: Colours.jet,
         borderRadius: BorderRadius.circular(10),
         value: _selectedIdentity == "" ? null : _selectedIdentity,
         hint: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.65,
-            child: const Text("Identity to use for decryption")),
+          width: MediaQuery.of(context).size.width * 0.65,
+          child: const Text(
+            "Identity to use for decryption",
+            style: TextStyle(color: Colours.mintCream),
+          ),
+        ),
         items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(
+              value,
+              style: const TextStyle(color: Colours.mintCream),
+            ),
           );
         }).toList(),
         onChanged: (String? value) {
@@ -150,112 +163,187 @@ class _HomePageState extends State<HomePage>
       nicename = " all:";
     }
     return MaterialApp(
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: Colours.raisinBlack,
+              secondary: Colours.slateGray,
+            ),
+            scaffoldBackgroundColor: Colours.spaceCadet,
+            canvasColor: Colours.spaceCadet,
+            textTheme: Colours.mintCreamText),
         home: DefaultTabController(
-      length: 2,
-      child: Scaffold(
-          appBar: AppBar(
-              title: const Text('EME'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    /*setState(() {
+          length: 2,
+          child: Scaffold(
+              appBar: AppBar(
+                  title: const Text('EME'),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        /*setState(() {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const SettingsPage()),
                 );
               });*/
-                  },
-                ),
-              ],
-              bottom: const TabBar(tabs: [
-                Tab(
-                  text: "Encrypt",
-                ),
-                Tab(
-                  text: "Decrypt",
-                ),
-              ])),
-          drawer: Drawer(
-              child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.purple,
-                  ),
-                  child: Text(
-                    'My Identities',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
+                      },
                     ),
+                  ],
+                  bottom: const TabBar(tabs: [
+                    Tab(
+                      text: "Encrypt",
+                    ),
+                    Tab(
+                      text: "Decrypt",
+                    ),
+                  ])),
+              drawer: Drawer(
+                  child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      color: Colours.raisinBlack,
+                      child: const DrawerHeader(
+                        child: Center(
+                          child: Text(
+                            'My Identities',
+                            style: TextStyle(
+                              fontSize: 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Column(
+                        children: <Widget>[
+                          TextButton(
+                            child: const Text(
+                              'All identities',
+                              style: TextStyle(color: Colours.mintCream),
+                            ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colours.slateGray)),
+                            onPressed: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage(
+                                            currIdentity: "",
+                                          )),
+                                );
+                              });
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
+                              'Manage identities',
+                              style: TextStyle(color: Colours.mintCream),
+                            ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colours.slateGray)),
+                            onPressed: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ManageIdentitiesPage()),
+                                );
+                              });
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
+                              'Add new identity',
+                              style: TextStyle(color: Colours.mintCream),
+                            ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colours.slateGray)),
+                            onPressed: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewIdentityPage()),
+                                );
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    FutureBuilder(
+                      future: _identitiesList(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data!;
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+
+                        return const CircularProgressIndicator();
+                      },
+                    ),
+                  ],
+                ),
+              )),
+              body: TabBarView(children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: <Widget>[
+                      Text('Contacts for$nicename'),
+                      FutureBuilder(
+                        future: _contactList(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!;
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+
+                          return const CircularProgressIndicator();
+                        },
+                      ),
+                      FloatingActionButton(
+                        child: const Icon(Icons.person_add_alt_1),
+                        onPressed: () {
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const NewContactPage()),
+                            );
+                          });
+                        },
+                      ),
+                      FloatingActionButton(
+                        heroTag: "Test",
+                        child: const Icon(Icons.textsms_sharp),
+                        onPressed: () {
+                          setState(() {
+                            Contacts().add(Contact(
+                                name: "jeff",
+                                pub: "gbk",
+                                linkedIdentity: "guess"));
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                TextButton(
-                  child: const Text('All identities'),
-                  onPressed: () {
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage(
-                                  currIdentity: "",
-                                )),
-                      );
-                    });
-                  },
-                ),
-                TextButton(
-                  child: const Text('Manage identities'),
-                  onPressed: () {
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ManageIdentitiesPage()),
-                      );
-                    });
-                  },
-                ),
-                TextButton(
-                  child: const Text('Add new identity'),
-                  onPressed: () {
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const NewIdentityPage()),
-                      );
-                    });
-                  },
-                ),
-                FutureBuilder(
-                  future: _identitiesList(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return snapshot.data!;
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-
-                    return const CircularProgressIndicator();
-                  },
-                ),
-              ],
-            ),
-          )),
-          body: TabBarView(children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Contacts for$nicename'),
+                Column(children: <Widget>[
                   FutureBuilder(
-                    future: _contactList(),
+                    future: _identitiesDropDown(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return snapshot.data!;
@@ -266,123 +354,116 @@ class _HomePageState extends State<HomePage>
                       return const CircularProgressIndicator();
                     },
                   ),
-                  FloatingActionButton(
-                    child: const Icon(Icons.person_add_alt_1),
+                  TextFormField(
+                    controller: _rawController,
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colours.jet,
+                        border: const OutlineInputBorder(),
+                        hintText:
+                            "Paste the encrypted message here, then press 'Decrypt'",
+                        hintStyle: const TextStyle(
+                            color: Colours.mintCream,
+                            overflow: TextOverflow.visible),
+                        suffixIcon: IconButton(
+                          icon: const Icon(
+                            Icons.paste,
+                            color: Colours.slateGray,
+                          ),
+                          onPressed: () {
+                            FlutterClipboard.paste()
+                                .then((value) => setState(() {
+                                      _rawController.text = value;
+                                    }));
+                          },
+                        )),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                  Text(
+                    _decryptErr,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  TextButton(
+                      child: const Text(
+                        'Decrypt',
+                        style: TextStyle(color: Colours.mintCream),
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colours.slateGray)),
+                      onPressed: () async {
+                        Identity? id =
+                            await Identities().get(_selectedIdentity) ??
+                                await Identities().get(widget.currIdentity);
+
+                        if (id == null) {
+                          _decryptErr =
+                              "*Please select an identity to use for decryption*";
+                          setState(() {});
+                          return;
+                        }
+
+                        try {
+                          String decrypted = await RSA.decryptOAEP(
+                              _rawController.text, "", Hash.SHA256, id.priv);
+
+                          setState(() {
+                            _decryptedController.text = decrypted;
+                          });
+                        } on RSAException {
+                          _decryptErr =
+                              "*This doesnt seem to be a valid encrypted message*";
+                          setState(() {});
+                          return;
+                        }
+                      }),
+                  TextFormField(
+                    controller: _decryptedController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colours.jet,
+                      border: const OutlineInputBorder(),
+                      hintText:
+                          "This is the message the sender wanted you to read",
+                      hintStyle: const TextStyle(
+                          color: Colours.mintCream,
+                          overflow: TextOverflow.visible),
+                      suffixIcon: IconButton(
+                          icon: const Icon(
+                            Icons.copy,
+                            color: Colours.slateGray,
+                          ),
+                          onPressed: () {
+                            FlutterClipboard.copy(_decryptedController.text);
+                          }),
+                    ),
+                    maxLines: null,
+                    readOnly: true,
+                  ),
+                  TextButton(
+                    child: const Text(
+                      "Done",
+                      style: TextStyle(color: Colours.mintCream),
+                    ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colours.slateGray)),
                     onPressed: () {
                       setState(() {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const NewContactPage()),
+                            builder: (context) => HomePage(
+                              currIdentity: widget.currIdentity,
+                            ),
+                          ),
                         );
                       });
                     },
-                  ),
-                  FloatingActionButton(
-                    heroTag: "Test",
-                    child: const Icon(Icons.textsms_sharp),
-                    onPressed: () {
-                      setState(() {
-                        Contacts().add(Contact(
-                            name: "jeff", pub: "gbk", linkedIdentity: "guess"));
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Column(children: <Widget>[
-              FutureBuilder(
-                future: _identitiesDropDown(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data!;
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-
-                  return const CircularProgressIndicator();
-                },
-              ),
-              TextFormField(
-                controller: _rawController,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintText:
-                        "Paste the encrypted message here, then press Decrypt",
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.paste),
-                      onPressed: () {
-                        FlutterClipboard.paste().then((value) => setState(() {
-                              _rawController.text = value;
-                            }));
-                      },
-                    )),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-              ),
-              Text(
-                _decryptErr,
-                style: const TextStyle(color: Colors.red),
-              ),
-              TextButton(
-                  child: const Text('Decrypt'),
-                  onPressed: () async {
-                    Identity? id = await Identities().get(_selectedIdentity) ??
-                        await Identities().get(widget.currIdentity);
-
-                    if (id == null) {
-                      _decryptErr =
-                          "*Please select an identity to use for decryption*";
-                      setState(() {});
-                      return;
-                    }
-
-                    try {
-                      String decrypted = await RSA.decryptOAEP(
-                          _rawController.text, "", Hash.SHA256, id.priv);
-
-                      setState(() {
-                        _decryptedController.text = decrypted;
-                      });
-                    } on RSAException {
-                      _decryptErr =
-                          "*This doesnt seem to be a valid encrypted message*";
-                      setState(() {});
-                      return;
-                    }
-                  }),
-              TextFormField(
-                controller: _decryptedController,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: "This is the message the sender wanted you to read",
-                  suffixIcon: IconButton(
-                      icon: const Icon(Icons.copy),
-                      onPressed: () {
-                        FlutterClipboard.copy(_decryptedController.text);
-                      }),
-                ),
-                maxLines: null,
-                readOnly: true,
-              ),
-              TextButton(
-                child: const Text("Done"),
-                onPressed: () {
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(
-                          currIdentity: widget.currIdentity,
-                        ),
-                      ),
-                    );
-                  });
-                },
-              )
-            ]),
-          ])),
-    ));
+                  )
+                ]),
+              ])),
+        ));
   }
 }

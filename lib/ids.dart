@@ -1,6 +1,7 @@
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 
+import 'colours.dart';
 import 'home.dart';
 import 'identities.dart';
 
@@ -57,9 +58,8 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.purple),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
+                  backgroundColor:
+                      MaterialStateProperty.all(Colours.slateGray)),
               child: const Text('Generate new pair'),
               onPressed: () async {
                 if (nameController.value.text == '') {
