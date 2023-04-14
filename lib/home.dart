@@ -46,8 +46,14 @@ class _HomePageState extends State<HomePage>
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(filtered[index].name),
-          subtitle: Text(hashedArr[index]),
+          title: Text(
+            filtered[index].name,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colours.mintCream),
+          ),
+          subtitle: Text(hashedArr[index],
+              style: const TextStyle(
+                  fontWeight: FontWeight.w400, fontFamily: "monospace")),
           trailing: const Icon(
             Icons.more_vert,
             color: Colours.slateGray,
@@ -301,7 +307,13 @@ class _HomePageState extends State<HomePage>
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: <Widget>[
-                      Text('Contacts for$nicename'),
+                      Text(
+                        'Contacts for$nicename',
+                        style: const TextStyle(
+                            fontSize: 26,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold),
+                      ),
                       FutureBuilder(
                         future: _contactList(),
                         builder: (context, snapshot) {
@@ -314,30 +326,36 @@ class _HomePageState extends State<HomePage>
                           return const CircularProgressIndicator();
                         },
                       ),
-                      FloatingActionButton(
-                        child: const Icon(Icons.person_add_alt_1),
-                        onPressed: () {
-                          setState(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const NewContactPage()),
-                            );
-                          });
-                        },
-                      ),
-                      FloatingActionButton(
-                        heroTag: "Test",
-                        child: const Icon(Icons.textsms_sharp),
-                        onPressed: () {
-                          setState(() {
-                            Contacts().add(Contact(
-                                name: "jeff",
-                                pub: "gbk",
-                                linkedIdentity: "guess"));
-                          });
-                        },
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FloatingActionButton(
+                            child: const Icon(Icons.person_add_alt_1),
+                            onPressed: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewContactPage()),
+                                );
+                              });
+                            },
+                          ),
+                          FloatingActionButton(
+                            heroTag: "Test",
+                            child: const Icon(Icons.textsms_sharp),
+                            onPressed: () {
+                              setState(() {
+                                Contacts().add(Contact(
+                                    name: "jeff",
+                                    pub: "gbk",
+                                    linkedIdentity: "guess"));
+                              });
+                            },
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),

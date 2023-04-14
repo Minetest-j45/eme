@@ -2,6 +2,7 @@ import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'colours.dart';
 import 'contacts.dart';
 import 'home.dart';
 import 'identities.dart';
@@ -31,15 +32,22 @@ class _NewContactPageState extends State<NewContactPage> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: DropdownButton(
+        dropdownColor: Colours.jet,
         borderRadius: BorderRadius.circular(10),
         value: _selectedIdentity == "" ? null : _selectedIdentity,
         hint: SizedBox(
             width: MediaQuery.of(context).size.width * 0.7,
-            child: const Text("Identity to relate this new contact to")),
+            child: const Text(
+              "Identity to relate this new contact to",
+              style: TextStyle(color: Colours.mintCream),
+            )),
         items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(
+              value,
+              style: const TextStyle(color: Colours.mintCream),
+            ),
           );
         }).toList(),
         onChanged: (String? value) {
@@ -60,120 +68,141 @@ class _NewContactPageState extends State<NewContactPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.06;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('EME'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.all(width),
-                child: Column(children: <Widget>[
-                  FutureBuilder(
-                    future: _identitiesDropDown(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!;
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-
-                      return const CircularProgressIndicator();
-                    },
-                  ),
-                  TextFormField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter the desired username for this contact',
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(width),
-                    child: ToggleSwitch(
-                      initialLabelIndex: _toggleIndex,
-                      totalSwitches: 2,
-                      labels: const ['Scan first', 'Scan second'],
-                      cornerRadius: 15,
-                      minWidth: width * 5,
-                      onToggle: (index) => _toggleIndex = index,
-                    ),
-                  ),
-                  const Text(
-                      "Make sure the person you want to add chooses the opposite option on thier device"),
-                ])),
-            Text(_error),
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.purple),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-              child: const Text('Add a new contact'),
-              onPressed: () async {
-                if (_selectedIdentity == '') {
-                  _error = 'Please select an identity';
-                  setState(() {});
-                  return;
-                }
-
-                if (_controller.value.text == '') {
-                  _error = 'Please enter the desired name for this contact';
-                  setState(() {});
-                  return;
-                }
-
-                //check if contact already exists
-                var usernames = await Contacts().read();
-                for (var i in usernames) {
-                  if (i.name == _controller.value.text) {
-                    _error = 'This name already exists';
-                    setState(() {});
-                    return;
-                  }
-                }
-
-                //get toggle switch value
-                if (_toggleIndex == null) {
-                  _error = 'Please select a scan order';
-                  setState(() {});
-                  return;
-                }
-
-                if (_toggleIndex == 0) {
-                  //scan first
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => QRScanPage(
-                                name: _controller.value.text,
-                                linkedIdentity: _selectedIdentity,
-                                toggleIndex: 0,
-                              )),
-                    );
-                  });
-                } else if (_toggleIndex == 1) {
-                  //display first
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => QrDisplayPage(
-                                name: _controller.value.text,
-                                linkedIdentity: _selectedIdentity,
-                                toggleIndex: 1,
-                              )),
-                    );
-                  });
-                }
-              },
+    return MaterialApp(
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: Colours.raisinBlack,
+              secondary: Colours.slateGray,
             ),
-          ],
-        ),
-      ),
-    );
+            scaffoldBackgroundColor: Colours.spaceCadet,
+            canvasColor: Colours.spaceCadet,
+            textTheme: Colours.mintCreamText),
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('EME'),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.all(width),
+                    child: Column(children: <Widget>[
+                      FutureBuilder(
+                        future: _identitiesDropDown(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!;
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+
+                          return const CircularProgressIndicator();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _controller,
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colours.jet,
+                          border: OutlineInputBorder(),
+                          hintText:
+                              'Enter the desired username for this contact',
+                          hintStyle: TextStyle(
+                              color: Colours.mintCream,
+                              overflow: TextOverflow.visible),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(width),
+                        child: ToggleSwitch(
+                          inactiveBgColor: Colours.jet,
+                          activeBgColor: const [Colours.slateGray],
+                          activeFgColor: Colours.mintCream,
+                          inactiveFgColor: Colours.mintCream,
+                          initialLabelIndex: _toggleIndex,
+                          totalSwitches: 2,
+                          labels: const ['Scan first', 'Scan second'],
+                          cornerRadius: 15,
+                          minWidth: width * 5,
+                          onToggle: (index) => _toggleIndex = index,
+                        ),
+                      ),
+                      const Text(
+                          "Make sure the person you want to add chooses the opposite option on thier device"),
+                    ])),
+                Text(_error),
+                TextButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colours.slateGray)),
+                  child: const Text(
+                    'Add a new contact',
+                    style: TextStyle(color: Colours.mintCream),
+                  ),
+                  onPressed: () async {
+                    if (_selectedIdentity == '') {
+                      _error = 'Please select an identity';
+                      setState(() {});
+                      return;
+                    }
+
+                    if (_controller.value.text == '') {
+                      _error = 'Please enter the desired name for this contact';
+                      setState(() {});
+                      return;
+                    }
+
+                    //check if contact already exists
+                    var usernames = await Contacts().read();
+                    for (var i in usernames) {
+                      if (i.name == _controller.value.text) {
+                        _error = 'This name already exists';
+                        setState(() {});
+                        return;
+                      }
+                    }
+
+                    //get toggle switch value
+                    if (_toggleIndex == null) {
+                      _error = 'Please select a scan order';
+                      setState(() {});
+                      return;
+                    }
+
+                    if (_toggleIndex == 0) {
+                      //scan first
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QRScanPage(
+                                    name: _controller.value.text,
+                                    linkedIdentity: _selectedIdentity,
+                                    toggleIndex: 0,
+                                  )),
+                        );
+                      });
+                    } else if (_toggleIndex == 1) {
+                      //display first
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QrDisplayPage(
+                                    name: _controller.value.text,
+                                    linkedIdentity: _selectedIdentity,
+                                    toggleIndex: 1,
+                                  )),
+                        );
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -212,7 +241,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
           "My public key summary (hash): ${(await RSA.hash(id!.pub, Hash.SHA256)).substring(0, 7)}"),
       Text(
         "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
-        style: TextStyle(color: _pubErr ?? Colors.black),
+        style: TextStyle(color: _pubErr ?? Colours.mintCream),
       ),
     ]);
   }

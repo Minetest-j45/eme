@@ -2,6 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 
+import 'colours.dart';
 import 'contacts.dart';
 import 'home.dart';
 
@@ -23,87 +24,125 @@ class _EncryptPageState extends State<EncryptPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Encrypt for'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //todo: dropdown menu, preset to the one they clicked on
-            TextFormField(
-              controller: _rawController,
-              decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: "Type/paste your message here, then press Encrypt",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.paste),
-                    onPressed: () {
-                      FlutterClipboard.paste().then((value) => setState(() {
-                            _rawController.text = value;
-                          }));
-                    },
-                  )),
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-            ),
-            Text(
-              _encryptErr,
-              style: const TextStyle(color: Colors.red),
-            ),
-            TextButton(
-                child: const Text('Encrypt'),
-                onPressed: () async {
-                  Contact? ctact = await Contacts().get(widget.currContact);
-                  if (ctact == null) {
-                    return;
-                  }
-
-                  try {
-                    String encrypted = await RSA.encryptOAEP(
-                        _rawController.text, "", Hash.SHA256, ctact.pub);
-
-                    setState(() {
-                      _encryptedController.text = encrypted;
-                    });
-                  } on RSAException {
-                    _encryptErr =
-                        "*Encryption failed, please try again or try removing and readding this persons contact*";
-                    setState(() {});
-                    return;
-                  }
-                }),
-            TextFormField(
-              controller: _encryptedController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: "Copy this text and send it to the recipient",
-                suffixIcon: IconButton(
-                    icon: const Icon(Icons.copy),
-                    onPressed: () {
-                      FlutterClipboard.copy(_encryptedController.text);
-                    }),
-              ),
-              maxLines: null,
-              readOnly: true,
-            ),
-            TextButton(
-              child: const Text("Done"),
-              onPressed: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(
-                        currIdentity: widget.currIdentity,
+    return MaterialApp(
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: Colours.raisinBlack,
+            secondary: Colours.slateGray,
+          ),
+          scaffoldBackgroundColor: Colours.spaceCadet,
+          canvasColor: Colours.spaceCadet,
+          textTheme: Colours.mintCreamText),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Encrypt for'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //todo: dropdown menu, preset to the one they clicked on
+              TextFormField(
+                controller: _rawController,
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colours.jet,
+                    border: const OutlineInputBorder(),
+                    hintText:
+                        "Type/paste your message here, then press Encrypt",
+                    hintStyle: const TextStyle(
+                        color: Colours.mintCream,
+                        overflow: TextOverflow.visible),
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.paste,
+                        color: Colours.slateGray,
                       ),
-                    ),
-                  );
-                });
-              },
-            )
-          ],
+                      onPressed: () {
+                        FlutterClipboard.paste().then((value) => setState(() {
+                              _rawController.text = value;
+                            }));
+                      },
+                    )),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+              ),
+              Text(
+                _encryptErr,
+                style: const TextStyle(color: Colors.red),
+              ),
+              TextButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colours.slateGray)),
+                  child: const Text(
+                    'Encrypt',
+                    style: TextStyle(color: Colours.mintCream),
+                  ),
+                  onPressed: () async {
+                    Contact? ctact = await Contacts().get(widget.currContact);
+                    if (ctact == null) {
+                      return;
+                    }
+
+                    try {
+                      String encrypted = await RSA.encryptOAEP(
+                          _rawController.text, "", Hash.SHA256, ctact.pub);
+
+                      setState(() {
+                        _encryptedController.text = encrypted;
+                      });
+                    } on RSAException {
+                      _encryptErr =
+                          "*Encryption failed, please try again or try removing and readding this persons contact*";
+                      setState(() {});
+                      return;
+                    }
+                  }),
+              TextFormField(
+                controller: _encryptedController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colours.jet,
+                  border: const OutlineInputBorder(),
+                  hintText: "Copy this text and send it to the recipient",
+                  hintStyle: const TextStyle(
+                      color: Colours.mintCream, overflow: TextOverflow.visible),
+                  suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.copy,
+                        color: Colours.slateGray,
+                      ),
+                      onPressed: () {
+                        FlutterClipboard.copy(_encryptedController.text);
+                      }),
+                ),
+                maxLines: null,
+                readOnly: true,
+              ),
+              TextButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Colours.slateGray)),
+                child: const Text(
+                  "Done",
+                  style: TextStyle(color: Colours.mintCream),
+                ),
+                onPressed: () {
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(
+                          currIdentity: widget.currIdentity,
+                        ),
+                      ),
+                    );
+                  });
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
