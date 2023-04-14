@@ -152,45 +152,63 @@ class _QRScanPageState extends State<QRScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(flex: 10, child: _buildQrView(context)),
-          Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Row(
-                children: <Widget>[
-                  ElevatedButton(
-                      onPressed: () async {
-                        await controller?.flipCamera();
-                        setState(() {});
-                      },
-                      child: const Text('Flip camera')),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ManualAddPage(
-                                    name: widget.name,
-                                    linkedIdentity: widget.linkedIdentity,
-                                    toggleIndex: widget.toggleIndex)),
-                          );
-                        });
-                      },
-                      child: const Text('Paste instead')),
-                ],
+    return MaterialApp(
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: Colours.raisinBlack,
+            secondary: Colours.slateGray,
+          ),
+          scaffoldBackgroundColor: Colours.spaceCadet,
+          canvasColor: Colours.spaceCadet,
+          textTheme: Colours.mintCreamText),
+      home: Scaffold(
+        body: Column(
+          children: <Widget>[
+            Expanded(flex: 10, child: _buildQrView(context)),
+            Expanded(
+              flex: 1,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Row(
+                  children: <Widget>[
+                    ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colours.slateGray)),
+                        onPressed: () async {
+                          await controller?.flipCamera();
+                          setState(() {});
+                        },
+                        child: const Text('Flip camera',
+                            style: TextStyle(color: Colours.mintCream))),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colours.slateGray)),
+                        onPressed: () async {
+                          setState(() {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ManualAddPage(
+                                      name: widget.name,
+                                      linkedIdentity: widget.linkedIdentity,
+                                      toggleIndex: widget.toggleIndex)),
+                            );
+                          });
+                        },
+                        child: const Text('Paste instead',
+                            style: TextStyle(color: Colours.mintCream))),
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -201,7 +219,7 @@ class _QRScanPageState extends State<QRScanPage> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.purple,
+          borderColor: Colours.raisinBlack,
           borderRadius: 10,
           borderLength: 30,
           borderWidth: 10,
@@ -305,92 +323,123 @@ class _ManualAddPageState extends State<ManualAddPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("EME"),
-      ),
-      body: Center(
-          child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(children: <Widget>[
-          TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.purple),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-              onPressed: () => AppSettings.openAppSettings(),
-              child: const Text(
-                  "Go to settings and enable camera permissions to allow for QR code scanning")),
-          TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.purple),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-              onPressed: () => setState(() {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => QRScanPage(
-                              name: widget.name,
-                              linkedIdentity: widget.linkedIdentity,
-                              toggleIndex: widget.toggleIndex)),
-                    );
-                  }),
-              child: const Text("Try scanning QR codes again")),
-          TextFormField(
-            controller: _pubController,
-            maxLines: null,
-            decoration: const InputDecoration(
-              hintText: 'Paste the public key here',
-            ),
+    return MaterialApp(
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: Colours.raisinBlack,
+            secondary: Colours.slateGray,
           ),
-          TextButton(
-            child: const Text('Next'),
-            onPressed: () {
-              setState(() {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConfirmContactPage(
-                      name: widget.name,
-                      linkedIdentity: widget.linkedIdentity,
-                      theirPub: _pubController.text,
+          scaffoldBackgroundColor: Colours.spaceCadet,
+          canvasColor: Colours.spaceCadet,
+          textTheme: Colours.mintCreamText),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("EME"),
+        ),
+        body: Center(
+            child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(children: <Widget>[
+            TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colours.slateGray),
+                  foregroundColor: MaterialStateProperty.all(Colours.mintCream),
+                ),
+                onPressed: () => AppSettings.openAppSettings(),
+                child: const Text(
+                    "Go to settings and enable camera permissions to allow for QR code scanning")),
+            TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colours.slateGray),
+                  foregroundColor: MaterialStateProperty.all(Colours.mintCream),
+                ),
+                onPressed: () => setState(() {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => QRScanPage(
+                                name: widget.name,
+                                linkedIdentity: widget.linkedIdentity,
+                                toggleIndex: widget.toggleIndex)),
+                      );
+                    }),
+                child: const Text("Try scanning QR codes again")),
+            TextFormField(
+              controller: _pubController,
+              maxLines: null,
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colours.jet,
+                  border: const OutlineInputBorder(),
+                  hintText: 'Paste the public key here',
+                  hintStyle: const TextStyle(
+                      color: Colours.mintCream, overflow: TextOverflow.visible),
+                  suffixIcon: IconButton(
+                    icon: const Icon(
+                      Icons.paste,
+                      color: Colours.slateGray,
                     ),
-                  ),
-                );
-              });
-
-              if (widget.toggleIndex == 0) {
-                //they scanned first, so have to display now
+                    onPressed: () {
+                      FlutterClipboard.paste().then((value) => setState(() {
+                            _pubController.text = value;
+                          }));
+                    },
+                  )),
+            ),
+            TextButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colours.slateGray)),
+              child: const Text(
+                'Next',
+                style: TextStyle(color: Colours.mintCream),
+              ),
+              onPressed: () {
                 setState(() {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => QrDisplayPage(
-                          name: widget.name,
-                          linkedIdentity: widget.linkedIdentity,
-                          toggleIndex: widget.toggleIndex),
-                    ),
-                  );
-                });
-              } else if (widget.toggleIndex == 1) {
-                //they displayed first, so are finished
-                setState(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(
-                        currIdentity: widget.linkedIdentity,
+                      builder: (context) => ConfirmContactPage(
+                        name: widget.name,
+                        linkedIdentity: widget.linkedIdentity,
+                        theirPub: _pubController.text,
                       ),
                     ),
                   );
                 });
-              }
-            },
-          )
-        ]),
-      )),
+
+                if (widget.toggleIndex == 0) {
+                  //they scanned first, so have to display now
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QrDisplayPage(
+                            name: widget.name,
+                            linkedIdentity: widget.linkedIdentity,
+                            toggleIndex: widget.toggleIndex),
+                      ),
+                    );
+                  });
+                } else if (widget.toggleIndex == 1) {
+                  //they displayed first, so are finished
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(
+                          currIdentity: widget.linkedIdentity,
+                        ),
+                      ),
+                    );
+                  });
+                }
+              },
+            )
+          ]),
+        )),
+      ),
     );
   }
 }
