@@ -24,4 +24,13 @@ class Colours {
     titleMedium: TextStyle(color: Colours.mintCream),
     titleSmall: TextStyle(color: Colours.mintCream),
   );
+
+  static var theme = ThemeData(
+      colorScheme: ColorScheme.fromSwatch().copyWith(
+        primary: Colours.raisinBlack,
+        secondary: Colours.slateGray,
+      ),
+      scaffoldBackgroundColor: Colours.spaceCadet,
+      canvasColor: Colours.spaceCadet,
+      textTheme: Colours.mintCreamText);
 }

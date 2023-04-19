@@ -69,14 +69,7 @@ class _NewContactPageState extends State<NewContactPage> {
     double width = MediaQuery.of(context).size.width * 0.06;
 
     return MaterialApp(
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: Colours.raisinBlack,
-              secondary: Colours.slateGray,
-            ),
-            scaffoldBackgroundColor: Colours.spaceCadet,
-            canvasColor: Colours.spaceCadet,
-            textTheme: Colours.mintCreamText),
+        theme: Colours.theme,
         home: Scaffold(
           appBar: AppBar(
             title: const Text('EME'),

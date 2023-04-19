@@ -25,14 +25,7 @@ class _EncryptPageState extends State<EncryptPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Colours.raisinBlack,
-            secondary: Colours.slateGray,
-          ),
-          scaffoldBackgroundColor: Colours.spaceCadet,
-          canvasColor: Colours.spaceCadet,
-          textTheme: Colours.mintCreamText),
+      theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Encrypt for'),

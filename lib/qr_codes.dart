@@ -1,13 +1,13 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:eme/home.dart';
-import 'package:eme/identities.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'colours.dart';
+import 'home.dart';
+import 'identities.dart';
 import 'newcontact.dart';
 
 class QrDisplayPage extends StatefulWidget {
@@ -53,14 +53,7 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Colours.raisinBlack,
-            secondary: Colours.slateGray,
-          ),
-          scaffoldBackgroundColor: Colours.spaceCadet,
-          canvasColor: Colours.spaceCadet,
-          textTheme: Colours.mintCreamText),
+      theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
           title: const Text("EME"),
@@ -153,14 +146,7 @@ class _QRScanPageState extends State<QRScanPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Colours.raisinBlack,
-            secondary: Colours.slateGray,
-          ),
-          scaffoldBackgroundColor: Colours.spaceCadet,
-          canvasColor: Colours.spaceCadet,
-          textTheme: Colours.mintCreamText),
+      theme: Colours.theme,
       home: Scaffold(
         body: Column(
           children: <Widget>[
@@ -324,14 +310,7 @@ class _ManualAddPageState extends State<ManualAddPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Colours.raisinBlack,
-            secondary: Colours.slateGray,
-          ),
-          scaffoldBackgroundColor: Colours.spaceCadet,
-          canvasColor: Colours.spaceCadet,
-          textTheme: Colours.mintCreamText),
+      theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
           title: const Text("EME"),

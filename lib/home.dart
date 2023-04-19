@@ -169,14 +169,7 @@ class _HomePageState extends State<HomePage>
       nicename = " all:";
     }
     return MaterialApp(
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: Colours.raisinBlack,
-              secondary: Colours.slateGray,
-            ),
-            scaffoldBackgroundColor: Colours.spaceCadet,
-            canvasColor: Colours.spaceCadet,
-            textTheme: Colours.mintCreamText),
+        theme: Colours.theme,
         home: DefaultTabController(
           length: 2,
           child: Scaffold(
@@ -184,7 +177,10 @@ class _HomePageState extends State<HomePage>
                   title: const Text('EME'),
                   actions: [
                     IconButton(
-                      icon: const Icon(Icons.settings),
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colours.slateGray,
+                      ),
                       onPressed: () {
                         /*setState(() {
                 Navigator.push(

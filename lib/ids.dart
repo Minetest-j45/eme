@@ -53,14 +53,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.06;
     return MaterialApp(
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: Colours.raisinBlack,
-              secondary: Colours.slateGray,
-            ),
-            scaffoldBackgroundColor: Colours.spaceCadet,
-            canvasColor: Colours.spaceCadet,
-            textTheme: Colours.mintCreamText),
+        theme: Colours.theme,
         home: Scaffold(
           appBar: AppBar(
             title: const Text('Generate a new keypair'),
@@ -215,14 +208,7 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Colours.raisinBlack,
-            secondary: Colours.slateGray,
-          ),
-          scaffoldBackgroundColor: Colours.spaceCadet,
-          canvasColor: Colours.spaceCadet,
-          textTheme: Colours.mintCreamText),
+      theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Generate a new keypair'),
