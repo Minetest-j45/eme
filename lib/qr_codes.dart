@@ -45,7 +45,12 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
             onPressed: () {
               FlutterClipboard.copy(pub);
             },
-            child: const Icon(Icons.copy)),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
+            child: const Icon(
+              Icons.copy,
+              color: Colours.mintCream,
+            )),
       ],
     );
   }
@@ -78,7 +83,9 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
                 },
               ),
               TextButton(
-                child: const Text('Next'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colours.slateGray),
+                ),
                 onPressed: () {
                   if (widget.toggleIndex == 0) {
                     //they scanned first, so are finished
@@ -107,6 +114,10 @@ class _QrDisplayPageState extends State<QrDisplayPage> {
                     });
                   }
                 },
+                child: const Text(
+                  'Next',
+                  style: TextStyle(color: Colours.mintCream),
+                ),
               )
             ],
           ),
