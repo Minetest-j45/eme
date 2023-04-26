@@ -52,7 +52,6 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   final nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 0.06;
     return MaterialApp(
         theme: Colours.theme,
         home: Scaffold(
@@ -64,7 +63,8 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.all(width),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
                   child: FutureBuilder(
                     future: _usernameInput(),
                     builder: (context, snapshot) {

@@ -7,15 +7,14 @@ import 'colours.dart';
 import 'newcontact.dart';
 
 class QRScanPage extends StatefulWidget {
-  const QRScanPage(
-      {super.key,
-      required this.name,
-      required this.linkedIdentity,
-      required this.toggleIndex});
+  const QRScanPage({
+    super.key,
+    required this.name,
+    required this.linkedIdentity,
+  });
 
   final String name;
   final String linkedIdentity;
-  final int toggleIndex;
 
   @override
   State<StatefulWidget> createState() => _QRScanPageState();
@@ -71,9 +70,9 @@ class _QRScanPageState extends State<QRScanPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ManualAddPage(
-                                      name: widget.name,
-                                      linkedIdentity: widget.linkedIdentity,
-                                      toggleIndex: widget.toggleIndex)),
+                                        name: widget.name,
+                                        linkedIdentity: widget.linkedIdentity,
+                                      )),
                             );
                           });
                         },
@@ -135,13 +134,13 @@ class _QRScanPageState extends State<QRScanPage> {
       setState(() {
         Navigator.pop(context);
         Navigator.push(
-          context,
-          MaterialPageRoute(
+            context,
+            MaterialPageRoute(
               builder: (context) => ManualAddPage(
-                  name: widget.name,
-                  linkedIdentity: widget.linkedIdentity,
-                  toggleIndex: widget.toggleIndex)),
-        );
+                name: widget.name,
+                linkedIdentity: widget.linkedIdentity,
+              ),
+            ));
       });
     }
   }
@@ -154,15 +153,14 @@ class _QRScanPageState extends State<QRScanPage> {
 }
 
 class ManualAddPage extends StatefulWidget {
-  const ManualAddPage(
-      {super.key,
-      required this.name,
-      required this.linkedIdentity,
-      required this.toggleIndex});
+  const ManualAddPage({
+    super.key,
+    required this.name,
+    required this.linkedIdentity,
+  });
 
   final String name;
   final String linkedIdentity;
-  final int toggleIndex;
 
   @override
   State<StatefulWidget> createState() => _ManualAddPageState();
@@ -202,9 +200,9 @@ class _ManualAddPageState extends State<ManualAddPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => QRScanPage(
-                                name: widget.name,
-                                linkedIdentity: widget.linkedIdentity,
-                                toggleIndex: widget.toggleIndex)),
+                                  name: widget.name,
+                                  linkedIdentity: widget.linkedIdentity,
+                                )),
                       );
                     }),
                 child: const Text("Try scanning QR codes again")),

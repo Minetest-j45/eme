@@ -19,7 +19,6 @@ class NewContactPage extends StatefulWidget {
 class _NewContactPageState extends State<NewContactPage> {
   var _selectedIdentity = "";
   var _error = "No errors so far";
-  int? _toggleIndex;
   late TextEditingController _controller;
 
   Future<Widget> _identitiesDropDown() async {
@@ -113,8 +112,6 @@ class _NewContactPageState extends State<NewContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 0.06;
-
     return MaterialApp(
         theme: Colours.theme,
         home: Scaffold(
@@ -128,7 +125,8 @@ class _NewContactPageState extends State<NewContactPage> {
                   children: <Widget>[
                     Column(children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(width),
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
                         child: FutureBuilder(
                           future: _usernameInput(),
                           builder: (context, snapshot) {
@@ -204,27 +202,16 @@ class _NewContactPageState extends State<NewContactPage> {
                           return;
                         }
 
-                        //get toggle switch value
-                        if (_toggleIndex == null) {
-                          _error = 'Please select a scan order';
-                          setState(() {});
-                          return;
-                        }
-
-                        if (_toggleIndex == 0) {
-                          //scan first
-                          setState(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => QRScanPage(
-                                        name: _controller.value.text,
-                                        linkedIdentity: _selectedIdentity,
-                                        toggleIndex: 0,
-                                      )),
-                            );
-                          });
-                        }
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => QRScanPage(
+                                      name: _controller.value.text,
+                                      linkedIdentity: _selectedIdentity,
+                                    )),
+                          );
+                        });
                       },
                     ),
                   ],
