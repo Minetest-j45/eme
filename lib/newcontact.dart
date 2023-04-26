@@ -18,7 +18,7 @@ class NewContactPage extends StatefulWidget {
 
 class _NewContactPageState extends State<NewContactPage> {
   String _selectedIdentity = "";
-  String _error = "No errors so far";
+  String _error = "";
   final TextEditingController _controller = TextEditingController(text: "");
 
   Future<Widget> _identitiesDropDown() async {
@@ -264,8 +264,8 @@ class ConfirmContactPage extends StatefulWidget {
 }
 
 class _ConfirmContactPageState extends State<ConfirmContactPage> {
-  late Color? _pubErr;
-  late String _err;
+  Color? _pubErr;
+  String _err = "";
 
   Future<Widget> _hashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
