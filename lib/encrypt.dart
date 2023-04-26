@@ -63,34 +63,14 @@ class _EncryptPageState extends State<EncryptPage> {
       theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Encrypt for'),
+          title: const Text('Encrypt'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              //todo: dropdown menu, preset to the one they clicked on
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("From: "),
-                  FutureBuilder(
-                    future: _identitiesDropDown(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!;
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-
-                      return const CircularProgressIndicator();
-                    },
-                  )
-                ],
-              ),
+              Text("To: ${widget.currContact}"),
               TextFormField(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (str) {},
                 controller: _rawController,
                 decoration: InputDecoration(
                     filled: true,
@@ -142,7 +122,7 @@ class _EncryptPageState extends State<EncryptPage> {
                       });
                     } on RSAException {
                       _encryptErr =
-                          "*Encryption failed, please try again or try removing and readding this persons contact*";
+                          "*Encryption failed, please try again or try removing and re-adding this persons contact*";
                       setState(() {});
                       return;
                     }

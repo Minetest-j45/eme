@@ -30,6 +30,16 @@ class Contacts {
     return contacts;
   }
 
+  Future<List<String>> nameArr() async {
+    List<Contact> contactsArr = await read();
+    List<String> contactsStrs = [];
+    for (var contact in contactsArr) {
+      contactsStrs.add(contact.name);
+    }
+
+    return contactsStrs;
+  }
+
   void _write(List<Contact> contacts) async {
     final json = jsonEncode({
       'contacts': contacts

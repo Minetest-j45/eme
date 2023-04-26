@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'colours.dart';
 import 'home.dart';
 import 'identities.dart';
+import 'util.dart';
 
 class NewIdentityPage extends StatefulWidget {
   const NewIdentityPage({super.key});
@@ -17,7 +18,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   List<String> keySizeOptions = <String>["2048", "3072", "4096"];
 
   Future<Widget> _usernameInput() async {
-    var identities = await Identities().read();
+    var identities = await Identities().nameArr();
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (str) {
@@ -30,7 +31,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
         }
 
         for (var i in identities) {
-          if (i.name == nameController.value.text) {
+          if (i == nameController.value.text) {
             return "*This name already exists*";
           }
         }
@@ -99,13 +100,6 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                       },
                       value: _keySize,
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.info_outline),
-                      color: Colours.slateGray,
-                    ),
-                    /*const Text(
-                        "RSA key size: (2048 for lower end devices; 4096 for highest security; 3072 for somewhere inbetween)"),*/
                   ],
                 ),
                 TextButton(
@@ -177,34 +171,6 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
     );
   }
 
-  void _confirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: const Text(
-              "Are you sure you want to delete all your identities?"),
-          content: const Text("This action CANNOT be undone"),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  setState(() {});
-
-                  Identities().rmAll();
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Yes")),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("No")),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -236,7 +202,13 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                         MaterialStateProperty.all(Colours.mintCream),
                   ),
                   onPressed: () {
-                    _confirmation(context);
+                    confirmation(
+                        context,
+                        "Are you sure you want to delete all your identities",
+                        "This action can not be undone",
+                        setState(
+                          () {},
+                        ));
                   },
                   child: const Text("Delete all my identities"))
             ],

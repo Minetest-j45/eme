@@ -18,7 +18,6 @@ class NewContactPage extends StatefulWidget {
 class _NewContactPageState extends State<NewContactPage> {
   var _selectedIdentity = "";
   var _error = "No errors so far";
-  final String _newName = "";
   int? _toggleIndex;
   late TextEditingController _controller;
 
@@ -54,10 +53,32 @@ class _NewContactPageState extends State<NewContactPage> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: _newName);
+  Future<Widget> _usernameInput() async {
+    var usernames = await Contacts().nameArr();
+    return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (str) {
+        if (str == '') {
+          return 'Please enter the desired name for this contact';
+        }
+        //check if contact already exists
+        for (var i in usernames) {
+          if (i == _controller.value.text) {
+            return 'This name already exists';
+          }
+        }
+        return null;
+      },
+      controller: _controller,
+      decoration: const InputDecoration(
+        filled: true,
+        fillColor: Colours.jet,
+        border: OutlineInputBorder(),
+        hintText: 'Enter the desired username for this contact',
+        hintStyle:
+            TextStyle(color: Colours.mintCream, overflow: TextOverflow.visible),
+      ),
+    );
   }
 
   @override
@@ -74,52 +95,52 @@ class _NewContactPageState extends State<NewContactPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.all(width),
-                    child: Column(children: <Widget>[
-                      FutureBuilder(
-                        future: _identitiesDropDown(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return snapshot.data!;
-                          } else if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
-                          }
+                Column(children: <Widget>[
+                  FutureBuilder(
+                    future: _identitiesDropDown(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data!;
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
 
-                          return const CircularProgressIndicator();
-                        },
-                      ),
-                      TextFormField(
-                        controller: _controller,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: Colours.jet,
-                          border: OutlineInputBorder(),
-                          hintText:
-                              'Enter the desired username for this contact',
-                          hintStyle: TextStyle(
-                              color: Colours.mintCream,
-                              overflow: TextOverflow.visible),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(width),
-                        child: ToggleSwitch(
-                          inactiveBgColor: Colours.jet,
-                          activeBgColor: const [Colours.slateGray],
-                          activeFgColor: Colours.mintCream,
-                          inactiveFgColor: Colours.mintCream,
-                          initialLabelIndex: _toggleIndex,
-                          totalSwitches: 2,
-                          labels: const ['Scan first', 'Scan second'],
-                          cornerRadius: 15,
-                          minWidth: width * 5,
-                          onToggle: (index) => _toggleIndex = index,
-                        ),
-                      ),
-                      const Text(
-                          "Make sure the person you want to add chooses the opposite option on thier device"),
-                    ])),
+                      return const CircularProgressIndicator();
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(width),
+                    child: FutureBuilder(
+                      future: _usernameInput(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data!;
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+
+                        return const CircularProgressIndicator();
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(width),
+                    child: ToggleSwitch(
+                      inactiveBgColor: Colours.jet,
+                      activeBgColor: const [Colours.slateGray],
+                      activeFgColor: Colours.mintCream,
+                      inactiveFgColor: Colours.mintCream,
+                      initialLabelIndex: _toggleIndex,
+                      totalSwitches: 2,
+                      labels: const ['Scan first', 'Scan second'],
+                      cornerRadius: 15,
+                      minWidth: width * 5,
+                      onToggle: (index) => _toggleIndex = index,
+                    ),
+                  ),
+                  const Text(
+                      "Make sure the person you want to add chooses the opposite option on thier device"),
+                ]),
                 Text(_error),
                 TextButton(
                   style: ButtonStyle(
@@ -134,22 +155,6 @@ class _NewContactPageState extends State<NewContactPage> {
                       _error = 'Please select an identity';
                       setState(() {});
                       return;
-                    }
-
-                    if (_controller.value.text == '') {
-                      _error = 'Please enter the desired name for this contact';
-                      setState(() {});
-                      return;
-                    }
-
-                    //check if contact already exists
-                    var usernames = await Contacts().read();
-                    for (var i in usernames) {
-                      if (i.name == _controller.value.text) {
-                        _error = 'This name already exists';
-                        setState(() {});
-                        return;
-                      }
                     }
 
                     //get toggle switch value
@@ -293,7 +298,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const HomePage(currIdentity: "")),
+                              HomePage(currIdentity: widget.linkedIdentity)),
                     );
                   });
                 },
