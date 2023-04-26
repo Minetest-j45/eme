@@ -124,11 +124,7 @@ class _HomePageState extends State<HomePage>
 
   var _selectedIdentity = "";
   Future<Widget> _identitiesDropDown() async {
-    List<Identity> identitiesArr = await Identities().read();
-    List<String> identitiesStrs = [];
-    for (var identity in identitiesArr) {
-      identitiesStrs.add(identity.name);
-    }
+    List<String> identitiesStrs = await Identities().nameArr();
 
     return Padding(
       padding: const EdgeInsets.all(16.0),

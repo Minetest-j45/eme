@@ -39,6 +39,16 @@ class Identities {
     return identities;
   }
 
+  Future<List<String>> nameArr() async {
+    List<Identity> identitiesArr = await read();
+    List<String> identitiesStrs = [];
+    for (var identity in identitiesArr) {
+      identitiesStrs.add(identity.name);
+    }
+
+    return identitiesStrs;
+  }
+
   void write(List<Identity> identities) async {
     var string = '';
     for (var identity in identities) {
