@@ -17,9 +17,9 @@ class NewContactPage extends StatefulWidget {
 }
 
 class _NewContactPageState extends State<NewContactPage> {
-  var _selectedIdentity = "";
-  var _error = "No errors so far";
-  late TextEditingController _controller;
+  String _selectedIdentity = "";
+  String _error = "No errors so far";
+  final TextEditingController _controller = TextEditingController(text: "");
 
   Future<Widget> _identitiesDropDown() async {
     List<String> identitiesStrs = await Identities().nameArr();
@@ -168,21 +168,43 @@ class _NewContactPageState extends State<NewContactPage> {
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: <
                         Widget>[
                       ElevatedButton(
-                          onPressed: () {}, //todo
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colours.slateGray)),
-                          child: const Icon(
-                            Icons.paste,
-                            color: Colours.mintCream,
-                          )),
-                      ElevatedButton(
-                          onPressed: () {}, //todo
+                          onPressed: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRScanPage(
+                                          name: _controller.value.text,
+                                          linkedIdentity: _selectedIdentity,
+                                        )),
+                              );
+                            });
+                          }, //todo
                           style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.all(Colours.slateGray)),
                           child: const Icon(
                             Icons.camera_alt_outlined,
+                            color: Colours.mintCream,
+                          )),
+                      ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ManualAddPage(
+                                          name: _controller.value.text,
+                                          linkedIdentity: _selectedIdentity,
+                                        )),
+                              );
+                            });
+                          }, //todo
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colours.slateGray)),
+                          child: const Icon(
+                            Icons.paste,
                             color: Colours.mintCream,
                           )),
                     ]),
