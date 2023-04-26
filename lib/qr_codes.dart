@@ -1,131 +1,10 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import 'colours.dart';
-import 'home.dart';
-import 'identities.dart';
 import 'newcontact.dart';
-
-class QrDisplayPage extends StatefulWidget {
-  const QrDisplayPage(
-      {super.key,
-      required this.name,
-      required this.linkedIdentity,
-      required this.toggleIndex});
-
-  final String name;
-  final String linkedIdentity;
-  final int toggleIndex;
-
-  @override
-  State<QrDisplayPage> createState() => _QrDisplayPageState();
-}
-
-class _QrDisplayPageState extends State<QrDisplayPage> {
-  Future<Widget> _qrImgLoad() async {
-    var id = await Identities().get(widget.linkedIdentity);
-    var pub = id!.pub;
-
-    return Column(
-      children: [
-        QrImage(
-          data: pub,
-          version: QrVersions.auto,
-          size: MediaQuery.of(context).size.width,
-          backgroundColor: Colours.mintCream,
-        ),
-        Text((await RSA.hash(pub, Hash.SHA256)).substring(0, 7),
-            style: const TextStyle(
-                fontWeight: FontWeight.w400, fontFamily: "monospace")),
-        ElevatedButton(
-            onPressed: () {
-              FlutterClipboard.copy(pub);
-            },
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
-            child: const Icon(
-              Icons.copy,
-              color: Colours.mintCream,
-            )),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: Colours.theme,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("EME"),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'Scan (or copy and send) the following:',
-              ),
-              FutureBuilder(
-                future: _qrImgLoad(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data!;
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-
-                  return const CircularProgressIndicator();
-                },
-              ),
-              TextButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colours.slateGray),
-                ),
-                onPressed: () {
-                  if (widget.toggleIndex == 0) {
-                    //they scanned first, so are finished
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            currIdentity: widget.linkedIdentity,
-                          ),
-                        ),
-                      );
-                    });
-                  } else if (widget.toggleIndex == 1) {
-                    //they displayed first, so they have to scan now
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QRScanPage(
-                              name: widget.name,
-                              linkedIdentity: widget.linkedIdentity,
-                              toggleIndex: widget.toggleIndex),
-                        ),
-                      );
-                    });
-                  }
-                },
-                child: const Text(
-                  'Next',
-                  style: TextStyle(color: Colours.mintCream),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class QRScanPage extends StatefulWidget {
   const QRScanPage(
@@ -245,32 +124,6 @@ class _QRScanPageState extends State<QRScanPage> {
             ),
           );
         });
-        if (widget.toggleIndex == 0) {
-          //they scanned first, so have to display now
-          setState(() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => QrDisplayPage(
-                    name: widget.name,
-                    linkedIdentity: widget.linkedIdentity,
-                    toggleIndex: widget.toggleIndex),
-              ),
-            );
-          });
-        } else if (widget.toggleIndex == 1) {
-          //they displayed first, so are finished
-          setState(() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(
-                  currIdentity: widget.linkedIdentity, //or empty string
-                ),
-              ),
-            );
-          });
-        }
       });
     });
   }
@@ -398,33 +251,6 @@ class _ManualAddPageState extends State<ManualAddPage> {
                     ),
                   );
                 });
-
-                if (widget.toggleIndex == 0) {
-                  //they scanned first, so have to display now
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QrDisplayPage(
-                            name: widget.name,
-                            linkedIdentity: widget.linkedIdentity,
-                            toggleIndex: widget.toggleIndex),
-                      ),
-                    );
-                  });
-                } else if (widget.toggleIndex == 1) {
-                  //they displayed first, so are finished
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(
-                          currIdentity: widget.linkedIdentity,
-                        ),
-                      ),
-                    );
-                  });
-                }
               },
             )
           ]),

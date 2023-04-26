@@ -1,6 +1,7 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'colours.dart';
 import 'contacts.dart';
@@ -81,6 +82,35 @@ class _NewContactPageState extends State<NewContactPage> {
     );
   }
 
+  Future<Widget> _qrImgLoad() async {
+    var id = await Identities().get(_selectedIdentity);
+    var pub = id!.pub;
+
+    return Column(
+      children: [
+        QrImage(
+          data: pub,
+          version: QrVersions.auto,
+          size: MediaQuery.of(context).size.width,
+          backgroundColor: Colours.mintCream,
+        ),
+        Text((await RSA.hash(pub, Hash.SHA256)).substring(0, 7),
+            style: const TextStyle(
+                fontWeight: FontWeight.w400, fontFamily: "monospace")),
+        ElevatedButton(
+            onPressed: () {
+              FlutterClipboard.copy(pub);
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
+            child: const Icon(
+              Icons.copy,
+              color: Colours.mintCream,
+            )),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.06;
@@ -88,115 +118,119 @@ class _NewContactPageState extends State<NewContactPage> {
     return MaterialApp(
         theme: Colours.theme,
         home: Scaffold(
-          appBar: AppBar(
-            title: const Text('EME'),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(children: <Widget>[
-                  FutureBuilder(
-                    future: _identitiesDropDown(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!;
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
+            appBar: AppBar(
+              title: const Text('EME'),
+            ),
+            body: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Column(children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(width),
+                        child: FutureBuilder(
+                          future: _usernameInput(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return snapshot.data!;
+                            } else if (snapshot.hasError) {
+                              return Text("${snapshot.error}");
+                            }
 
-                      return const CircularProgressIndicator();
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(width),
-                    child: FutureBuilder(
-                      future: _usernameInput(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return snapshot.data!;
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                      ),
+                      FutureBuilder(
+                        future: _identitiesDropDown(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!;
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+
+                          return const CircularProgressIndicator();
+                        },
+                      ),
+                      FutureBuilder(
+                        future: _qrImgLoad(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!;
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+
+                          return const CircularProgressIndicator();
+                        },
+                      ),
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                        Widget>[
+                      ElevatedButton(
+                          onPressed: () {}, //todo
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colours.slateGray)),
+                          child: const Icon(
+                            Icons.paste,
+                            color: Colours.mintCream,
+                          )),
+                      ElevatedButton(
+                          onPressed: () {}, //todo
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colours.slateGray)),
+                          child: const Icon(
+                            Icons.camera_alt_outlined,
+                            color: Colours.mintCream,
+                          )),
+                    ]),
+                    Text(_error),
+                    TextButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colours.slateGray)),
+                      child: const Text(
+                        'Add a new contact',
+                        style: TextStyle(color: Colours.mintCream),
+                      ),
+                      onPressed: () async {
+                        if (_selectedIdentity == '') {
+                          _error = 'Please select an identity';
+                          setState(() {});
+                          return;
                         }
 
-                        return const CircularProgressIndicator();
+                        //get toggle switch value
+                        if (_toggleIndex == null) {
+                          _error = 'Please select a scan order';
+                          setState(() {});
+                          return;
+                        }
+
+                        if (_toggleIndex == 0) {
+                          //scan first
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QRScanPage(
+                                        name: _controller.value.text,
+                                        linkedIdentity: _selectedIdentity,
+                                        toggleIndex: 0,
+                                      )),
+                            );
+                          });
+                        }
                       },
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(width),
-                    child: ToggleSwitch(
-                      inactiveBgColor: Colours.jet,
-                      activeBgColor: const [Colours.slateGray],
-                      activeFgColor: Colours.mintCream,
-                      inactiveFgColor: Colours.mintCream,
-                      initialLabelIndex: _toggleIndex,
-                      totalSwitches: 2,
-                      labels: const ['Scan first', 'Scan second'],
-                      cornerRadius: 15,
-                      minWidth: width * 5,
-                      onToggle: (index) => _toggleIndex = index,
-                    ),
-                  ),
-                  const Text(
-                      "Make sure the person you want to add chooses the opposite option on thier device"),
-                ]),
-                Text(_error),
-                TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colours.slateGray)),
-                  child: const Text(
-                    'Add a new contact',
-                    style: TextStyle(color: Colours.mintCream),
-                  ),
-                  onPressed: () async {
-                    if (_selectedIdentity == '') {
-                      _error = 'Please select an identity';
-                      setState(() {});
-                      return;
-                    }
-
-                    //get toggle switch value
-                    if (_toggleIndex == null) {
-                      _error = 'Please select a scan order';
-                      setState(() {});
-                      return;
-                    }
-
-                    if (_toggleIndex == 0) {
-                      //scan first
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => QRScanPage(
-                                    name: _controller.value.text,
-                                    linkedIdentity: _selectedIdentity,
-                                    toggleIndex: 0,
-                                  )),
-                        );
-                      });
-                    } else if (_toggleIndex == 1) {
-                      //display first
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => QrDisplayPage(
-                                    name: _controller.value.text,
-                                    linkedIdentity: _selectedIdentity,
-                                    toggleIndex: 1,
-                                  )),
-                        );
-                      });
-                    }
-                  },
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ));
+              ),
+            )));
   }
 }
 
