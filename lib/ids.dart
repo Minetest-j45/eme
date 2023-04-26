@@ -14,27 +14,31 @@ class NewIdentityPage extends StatefulWidget {
 }
 
 class _NewIdentityPageState extends State<NewIdentityPage> {
+  bool _errors = true;
   String _keySize = "4096";
   List<String> keySizeOptions = <String>["2048", "3072", "4096"];
 
   Future<Widget> _usernameInput() async {
     var identities = await Identities().nameArr();
     return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.always,
       validator: (str) {
+        _errors = true;
         if (str == null) {
           return null;
         } else if (str == '') {
-          return '*Please enter a name*';
+          return 'Please enter a name';
         } else if (str.contains('|')) {
-          return '*Disallowed character: |*';
+          return 'Disallowed character: |';
         }
 
         for (var i in identities) {
           if (i == nameController.value.text) {
-            return "*This name already exists*";
+            return "This name already exists";
           }
         }
+
+        _errors = false;
         return null;
       },
       controller: nameController,
@@ -111,6 +115,10 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     style: TextStyle(color: Colours.mintCream),
                   ),
                   onPressed: () async {
+                    if (_errors) {
+                      return;
+                    }
+
                     int keySize = int.parse(_keySize);
 
                     var pair = await RSA.generate(keySize);

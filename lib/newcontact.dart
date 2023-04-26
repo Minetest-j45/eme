@@ -19,6 +19,7 @@ class NewContactPage extends StatefulWidget {
 class _NewContactPageState extends State<NewContactPage> {
   String _selectedIdentity = "";
   String _error = "";
+  bool _errors = true;
   final TextEditingController _controller = TextEditingController(text: "");
 
   Future<Widget> _identitiesDropDown() async {
@@ -56,8 +57,9 @@ class _NewContactPageState extends State<NewContactPage> {
   Future<Widget> _usernameInput() async {
     var usernames = await Contacts().nameArr();
     return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.always,
       validator: (str) {
+        _errors = true;
         if (str == '') {
           return 'Please enter the desired name for this contact';
         }
@@ -67,6 +69,8 @@ class _NewContactPageState extends State<NewContactPage> {
             return 'This name already exists';
           }
         }
+
+        _errors = false;
         return null;
       },
       controller: _controller,
@@ -174,6 +178,9 @@ class _NewContactPageState extends State<NewContactPage> {
                       ElevatedButton(
                           onPressed: () {
                             setState(() {
+                              if (_errors) {
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -193,6 +200,9 @@ class _NewContactPageState extends State<NewContactPage> {
                           )),
                       ElevatedButton(
                           onPressed: () {
+                            if (_errors) {
+                              return;
+                            }
                             setState(() {
                               Navigator.push(
                                 context,
@@ -213,33 +223,6 @@ class _NewContactPageState extends State<NewContactPage> {
                           )),
                     ]),
                     Text(_error),
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colours.slateGray)),
-                      child: const Text(
-                        'Add a new contact',
-                        style: TextStyle(color: Colours.mintCream),
-                      ),
-                      onPressed: () async {
-                        if (_selectedIdentity == '') {
-                          _error = 'Please select an identity';
-                          setState(() {});
-                          return;
-                        }
-
-                        setState(() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QRScanPage(
-                                      name: _controller.value.text,
-                                      linkedIdentity: _selectedIdentity,
-                                    )),
-                          );
-                        });
-                      },
-                    ),
                   ],
                 ),
               ),
