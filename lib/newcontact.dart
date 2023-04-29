@@ -272,68 +272,71 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Confirm new contact:'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("New contact name: ${widget.name}"),
-            Text("Linked identity: ${widget.linkedIdentity}"),
-            FutureBuilder(
-              future: _hashLoad(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-
-                return const CircularProgressIndicator();
-              },
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const NewContactPage()),
-                  );
-                });
-              },
-              child: const Text("Start again"),
-            ),
-            Text(
-              _err,
-              style: const TextStyle(color: Colors.red),
-            ),
-            TextButton(
-                onPressed: () {
-                  if (_pubErr == Colors.red) {
-                    _err =
-                        "*There is a problem with their public key, please start again*";
-                    setState(() {});
-                    return;
+    return MaterialApp(
+      theme: Colours.theme,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Confirm new contact:'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("New contact name: ${widget.name}"),
+              Text("Linked identity: ${widget.linkedIdentity}"),
+              FutureBuilder(
+                future: _hashLoad(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
                   }
 
-                  Contacts().add(Contact(
-                      name: widget.name,
-                      pub: widget.theirPub,
-                      linkedIdentity: widget.linkedIdentity));
+                  return const CircularProgressIndicator();
+                },
+              ),
+              TextButton(
+                onPressed: () {
                   setState(() {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              HomePage(currIdentity: widget.linkedIdentity)),
+                          builder: (context) => const NewContactPage()),
                     );
                   });
                 },
-                child: const Text("Confirm")),
-          ],
+                child: const Text("Start again"),
+              ),
+              Text(
+                _err,
+                style: const TextStyle(color: Colors.red),
+              ),
+              TextButton(
+                  onPressed: () {
+                    if (_pubErr == Colors.red) {
+                      _err =
+                          "*There is a problem with their public key, please start again*";
+                      setState(() {});
+                      return;
+                    }
+
+                    Contacts().add(Contact(
+                        name: widget.name,
+                        pub: widget.theirPub,
+                        linkedIdentity: widget.linkedIdentity));
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                HomePage(currIdentity: widget.linkedIdentity)),
+                      );
+                    });
+                  },
+                  child: const Text("Confirm")),
+            ],
+          ),
         ),
       ),
     );
