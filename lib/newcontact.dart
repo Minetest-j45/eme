@@ -18,11 +18,11 @@ class NewContactPage extends StatefulWidget {
 
 class _NewContactPageState extends State<NewContactPage> {
   String _selectedIdentity = "";
-  String _error = "";
+  final _error = "";
   bool _errors = true;
   final TextEditingController _controller = TextEditingController(text: "");
 
-  Future<Widget> _identitiesDropDown() async {
+  Future<Widget> _identitiesDropDown(context) async {
     List<String> identitiesStrs = await Identities().nameArr();
 
     return Padding(
@@ -85,7 +85,7 @@ class _NewContactPageState extends State<NewContactPage> {
     );
   }
 
-  Future<Widget> _qrImgLoad() async {
+  Future<Widget> _qrImgLoad(context) async {
     var id = await Identities().get(_selectedIdentity);
     if (id == null) {
       return Column();
@@ -149,7 +149,7 @@ class _NewContactPageState extends State<NewContactPage> {
                         ),
                       ),
                       FutureBuilder(
-                        future: _identitiesDropDown(),
+                        future: _identitiesDropDown(context),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return snapshot.data!;
@@ -161,7 +161,7 @@ class _NewContactPageState extends State<NewContactPage> {
                         },
                       ),
                       FutureBuilder(
-                        future: _qrImgLoad(),
+                        future: _qrImgLoad(context),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return snapshot.data!;
@@ -296,7 +296,14 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                   return const CircularProgressIndicator();
                 },
               ),
+              Text(
+                _err,
+                style: const TextStyle(color: Colors.red),
+              ),
               TextButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Colours.slateGray)),
                 onPressed: () {
                   setState(() {
                     Navigator.push(
@@ -306,13 +313,15 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                     );
                   });
                 },
-                child: const Text("Start again"),
-              ),
-              Text(
-                _err,
-                style: const TextStyle(color: Colors.red),
+                child: const Text(
+                  "Start again",
+                  style: TextStyle(color: Colours.mintCream),
+                ),
               ),
               TextButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colours.slateGray)),
                   onPressed: () {
                     if (_pubErr == Colors.red) {
                       _err =
@@ -334,7 +343,10 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                       );
                     });
                   },
-                  child: const Text("Confirm")),
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(color: Colours.mintCream),
+                  )),
             ],
           ),
         ),

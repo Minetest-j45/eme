@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'colours.dart';
 import 'contacts.dart';
 import 'home.dart';
-import 'identities.dart';
 
 class EncryptPage extends StatefulWidget {
   const EncryptPage(
@@ -22,40 +21,6 @@ class _EncryptPageState extends State<EncryptPage> {
   String _encryptErr = "";
   final _rawController = TextEditingController();
   final _encryptedController = TextEditingController();
-
-  var _selectedIdentity = "";
-  Future<Widget> _identitiesDropDown() async {
-    List<String> identitiesStrs = await Identities().nameArr();
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: DropdownButton(
-        dropdownColor: Colours.jet,
-        borderRadius: BorderRadius.circular(10),
-        value: _selectedIdentity == "" ? null : _selectedIdentity,
-        hint: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.65,
-          child: const Text(
-            "Identity to use for encryption",
-            style: TextStyle(color: Colours.mintCream),
-          ),
-        ),
-        items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style: const TextStyle(color: Colours.mintCream),
-            ),
-          );
-        }).toList(),
-        onChanged: (String? value) {
-          _selectedIdentity = value!;
-          setState(() {});
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -127,10 +127,8 @@ class _QRScanPageState extends State<QRScanPage> {
     });
   }
 
-  bool manual = false;
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
-    if (!p && !manual) {
-      manual = true;
+    if (!p) {
       setState(() {
         Navigator.pop(context);
         Navigator.push(

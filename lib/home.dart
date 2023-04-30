@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage>
   }
 
   var _selectedIdentity = "";
-  Future<Widget> _identitiesDropDown() async {
+  Future<Widget> _identitiesDropDown(context) async {
     List<String> identitiesStrs = await Identities().nameArr();
 
     return Padding(
@@ -353,7 +353,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 Column(children: <Widget>[
                   FutureBuilder(
-                    future: _identitiesDropDown(),
+                    future: _identitiesDropDown(context),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return snapshot.data!;
