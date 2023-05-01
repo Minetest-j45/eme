@@ -14,41 +14,41 @@ class NewIdentityPage extends StatefulWidget {
 }
 
 class _NewIdentityPageState extends State<NewIdentityPage> {
-  bool _errors = true;
   String _keySize = "4096";
   List<String> keySizeOptions = <String>["2048", "3072", "4096"];
+  final _usernameInputFormKey = GlobalKey<FormState>();
 
   Future<Widget> _usernameInput() async {
     var identities = await Identities().nameArr();
-    return TextFormField(
+    return Form(
+      key: _usernameInputFormKey,
       autovalidateMode: AutovalidateMode.always,
-      validator: (str) {
-        _errors = true;
-        if (str == null) {
-          return null;
-        } else if (str == '') {
-          return 'Please enter a name';
-        } else if (str.contains('|')) {
-          return 'Disallowed character: |';
-        }
-
-        for (var i in identities) {
-          if (i == nameController.value.text) {
-            return "This name already exists";
+      child: TextFormField(
+        autovalidateMode: AutovalidateMode.always,
+        validator: (str) {
+          if (str == '') {
+            return 'Please enter the desired name for this new contact';
+          } else if (str!.contains('|')) {
+            return 'Disallowed character: |';
           }
-        }
 
-        _errors = false;
-        return null;
-      },
-      controller: nameController,
-      decoration: const InputDecoration(
-        filled: true,
-        fillColor: Colours.jet,
-        border: OutlineInputBorder(),
-        errorStyle: TextStyle(fontWeight: FontWeight.bold),
-        hintText: 'Enter the desired username for this identity',
-        hintStyle: TextStyle(color: Colours.mintCream),
+          for (var i in identities) {
+            if (i == nameController.value.text) {
+              return "This name already exists";
+            }
+          }
+
+          return null;
+        },
+        controller: nameController,
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: Colours.jet,
+          border: OutlineInputBorder(),
+          errorStyle: TextStyle(fontWeight: FontWeight.bold),
+          hintText: 'Enter the desired username for this identity',
+          hintStyle: TextStyle(color: Colours.mintCream),
+        ),
       ),
     );
   }
@@ -115,7 +115,9 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     style: TextStyle(color: Colours.mintCream),
                   ),
                   onPressed: () async {
-                    if (_errors) {
+                    if (_usernameInputFormKey.currentState!.validate()) {
+                      _usernameInputFormKey.currentState!.save();
+                    } else {
                       return;
                     }
 
