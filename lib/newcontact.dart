@@ -19,68 +19,77 @@ class NewContactPage extends StatefulWidget {
 class _NewContactPageState extends State<NewContactPage> {
   String _selectedIdentity = "";
   final _error = "";
-  bool _errors = true;
+  final _dropDownFormKey = GlobalKey<FormState>();
+  final _usernameInputFormKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController(text: "");
 
   Future<Widget> _identitiesDropDown(context) async {
     List<String> identitiesStrs = await Identities().nameArr();
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: DropdownButton(
-        dropdownColor: Colours.jet,
-        borderRadius: BorderRadius.circular(10),
-        value: _selectedIdentity == "" ? null : _selectedIdentity,
-        hint: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: const Text(
-              "Identity to relate this new contact to",
-              style: TextStyle(color: Colours.mintCream),
-            )),
-        items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style: const TextStyle(color: Colours.mintCream),
-            ),
-          );
-        }).toList(),
-        onChanged: (String? value) {
-          _selectedIdentity = value!;
-          setState(() {});
-        },
+    return Form(
+      key: _dropDownFormKey,
+      autovalidateMode: AutovalidateMode.always,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: DropdownButtonFormField(
+          dropdownColor: Colours.jet,
+          borderRadius: BorderRadius.circular(10),
+          value: _selectedIdentity == "" ? null : _selectedIdentity,
+          validator: (value) => value == null
+              ? "Please select the identity you want to relate this contact to"
+              : null,
+          hint: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: const Text(
+                "Identity to relate this new contact to",
+                style: TextStyle(color: Colours.mintCream),
+              )),
+          items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: const TextStyle(color: Colours.mintCream),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? value) {
+            _selectedIdentity = value!;
+            setState(() {});
+          },
+        ),
       ),
     );
   }
 
   Future<Widget> _usernameInput() async {
     var usernames = await Contacts().nameArr();
-    return TextFormField(
+    return Form(
+      key: _usernameInputFormKey,
       autovalidateMode: AutovalidateMode.always,
-      validator: (str) {
-        _errors = true;
-        if (str == '') {
-          return 'Please enter the desired name for this contact';
-        }
-
-        for (var i in usernames) {
-          if (i == _controller.value.text) {
-            return 'This name already exists';
+      child: TextFormField(
+        validator: (str) {
+          if (str == '') {
+            return 'Please enter the desired name for this contact';
           }
-        }
 
-        _errors = false;
-        return null;
-      },
-      controller: _controller,
-      decoration: const InputDecoration(
-        filled: true,
-        fillColor: Colours.jet,
-        border: OutlineInputBorder(),
-        hintText: 'Enter the desired username for this contact',
-        hintStyle:
-            TextStyle(color: Colours.mintCream, overflow: TextOverflow.visible),
+          for (var i in usernames) {
+            if (i == _controller.value.text) {
+              return 'This name already exists';
+            }
+          }
+
+          return null;
+        },
+        controller: _controller,
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: Colours.jet,
+          border: OutlineInputBorder(),
+          hintText: 'Enter the desired username for this contact',
+          hintStyle: TextStyle(
+              color: Colours.mintCream, overflow: TextOverflow.visible),
+        ),
       ),
     );
   }
@@ -132,8 +141,10 @@ class _NewContactPageState extends State<NewContactPage> {
                   children: <Widget>[
                     Column(children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.05),
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.width * 0.05,
+                            left: MediaQuery.of(context).size.width * 0.05,
+                            right: MediaQuery.of(context).size.width * 0.05),
                         child: FutureBuilder(
                           future: _usernameInput(),
                           builder: (context, snapshot) {
@@ -176,10 +187,19 @@ class _NewContactPageState extends State<NewContactPage> {
                         Widget>[
                       ElevatedButton(
                           onPressed: () {
+                            if (_usernameInputFormKey.currentState!
+                                .validate()) {
+                              _usernameInputFormKey.currentState!.save();
+                            } else {
+                              return;
+                            }
+                            if (_dropDownFormKey.currentState!.validate()) {
+                              _dropDownFormKey.currentState!.save();
+                            } else {
+                              return;
+                            }
+
                             setState(() {
-                              if (_errors) {
-                                return;
-                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -199,9 +219,14 @@ class _NewContactPageState extends State<NewContactPage> {
                           )),
                       ElevatedButton(
                           onPressed: () {
-                            if (_errors) {
-                              return;
+                            if (_usernameInputFormKey.currentState!
+                                .validate()) {
+                              _usernameInputFormKey.currentState!.save();
                             }
+                            if (_dropDownFormKey.currentState!.validate()) {
+                              _dropDownFormKey.currentState!.save();
+                            }
+
                             setState(() {
                               Navigator.push(
                                 context,
