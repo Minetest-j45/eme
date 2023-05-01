@@ -45,7 +45,6 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
           filled: true,
           fillColor: Colours.jet,
           border: OutlineInputBorder(),
-          errorStyle: TextStyle(fontWeight: FontWeight.bold),
           hintText: 'Enter the desired username for this identity',
           hintStyle: TextStyle(color: Colours.mintCream),
         ),

@@ -18,7 +18,6 @@ class NewContactPage extends StatefulWidget {
 
 class _NewContactPageState extends State<NewContactPage> {
   String _selectedIdentity = "";
-  final _error = "";
   final _dropDownFormKey = GlobalKey<FormState>();
   final _usernameInputFormKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController(text: "");
@@ -250,7 +249,6 @@ class _NewContactPageState extends State<NewContactPage> {
                             color: Colours.mintCream,
                           )),
                     ]),
-                    Text(_error),
                   ],
                 ),
               ),
@@ -275,7 +273,6 @@ class ConfirmContactPage extends StatefulWidget {
 }
 
 class _ConfirmContactPageState extends State<ConfirmContactPage> {
-  Color? _pubErr;
   String _err = "";
 
   Future<Widget> _hashLoad() async {
@@ -284,7 +281,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
     try {
       await RSA.encryptOAEP("test", "", Hash.SHA256, widget.theirPub);
     } on RSAException {
-      _pubErr = Colors.red;
+      _err = "Error while testing their public key";
     }
 
     return Column(children: [
@@ -292,7 +289,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
           "My public key summary (hash): ${(await RSA.hash(id!.pub, Hash.SHA256)).substring(0, 7)}"),
       Text(
         "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
-        style: TextStyle(color: _pubErr ?? Colours.mintCream),
+        style: TextStyle(color: _err == "" ? Colours.mintCream : Colors.red),
       ),
     ]);
   }
@@ -350,9 +347,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                       backgroundColor:
                           MaterialStateProperty.all(Colours.slateGray)),
                   onPressed: () {
-                    if (_pubErr == Colors.red) {
-                      _err = "Error while testing their public key";
-                      setState(() {});
+                    if (_err != "") {
                       return;
                     }
 
