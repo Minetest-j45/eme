@@ -347,8 +347,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                           MaterialStateProperty.all(Colours.slateGray)),
                   onPressed: () {
                     if (_pubErr == Colors.red) {
-                      _err =
-                          "*There is a problem with their public key, please start again*";
+                      _err = "Error while testing their public key";
                       setState(() {});
                       return;
                     }

@@ -121,35 +121,43 @@ class _HomePageState extends State<HomePage>
   }
 
   var _selectedIdentity = "";
+  final _dropDownFormKey = GlobalKey<FormState>();
   Future<Widget> _identitiesDropDown(context) async {
     List<String> identitiesStrs = await Identities().nameArr();
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: DropdownButton(
-        dropdownColor: Colours.jet,
-        borderRadius: BorderRadius.circular(10),
-        value: _selectedIdentity == "" ? null : _selectedIdentity,
-        hint: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.65,
-          child: const Text(
-            "Identity to use for decryption",
-            style: TextStyle(color: Colours.mintCream),
-          ),
-        ),
-        items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style: const TextStyle(color: Colours.mintCream),
+      child: Form(
+        key: _dropDownFormKey,
+        autovalidateMode: AutovalidateMode.always,
+        child: DropdownButtonFormField(
+          dropdownColor: Colours.jet,
+          borderRadius: BorderRadius.circular(10),
+          value: _selectedIdentity == "" ? null : _selectedIdentity,
+          validator: (value) => value == null
+              ? "Please select the identity you want to use for decryption"
+              : null,
+          hint: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.65,
+            child: const Text(
+              "Identity to use for decryption",
+              style: TextStyle(color: Colours.mintCream),
             ),
-          );
-        }).toList(),
-        onChanged: (String? value) {
-          _selectedIdentity = value!;
-          setState(() {});
-        },
+          ),
+          items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: const TextStyle(color: Colours.mintCream),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? value) {
+            _selectedIdentity = value!;
+            setState(() {});
+          },
+        ),
       ),
     );
   }
@@ -332,146 +340,118 @@ class _HomePageState extends State<HomePage>
                               });
                             },
                           ),
-                          FloatingActionButton(
-                            heroTag: "Test",
-                            child: const Icon(Icons.textsms_sharp),
-                            onPressed: () {
-                              setState(() {
-                                Contacts().add(Contact(
-                                    name: "jeff",
-                                    pub: "gbk",
-                                    linkedIdentity: "guess"));
-                              });
-                            },
-                          ),
                         ],
                       )
                     ],
                   ),
                 ),
-                Column(children: <Widget>[
-                  FutureBuilder(
-                    future: _identitiesDropDown(context),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!;
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(children: <Widget>[
+                    FutureBuilder(
+                      future: _identitiesDropDown(context),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data!;
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
 
-                      return const CircularProgressIndicator();
-                    },
-                  ),
-                  TextFormField(
-                    controller: _rawController,
-                    decoration: InputDecoration(
+                        return const CircularProgressIndicator();
+                      },
+                    ),
+                    TextFormField(
+                      controller: _rawController,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colours.jet,
+                          border: const OutlineInputBorder(),
+                          hintText:
+                              "Paste the encrypted message here, then press 'Decrypt'",
+                          hintStyle: const TextStyle(
+                              color: Colours.mintCream,
+                              overflow: TextOverflow.visible),
+                          suffixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.paste,
+                              color: Colours.slateGray,
+                            ),
+                            onPressed: () {
+                              FlutterClipboard.paste()
+                                  .then((value) => setState(() {
+                                        _rawController.text = value;
+                                      }));
+                            },
+                          )),
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                    ),
+                    Text(
+                      _decryptErr,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    TextButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colours.slateGray)),
+                      onPressed: () async {
+                        if (_dropDownFormKey.currentState!.validate()) {
+                          _dropDownFormKey.currentState!.save();
+                        } else {
+                          return;
+                        }
+
+                        Identity? id =
+                            await Identities().get(_selectedIdentity);
+
+                        if (id == null) {
+                          return;
+                        }
+
+                        try {
+                          String decrypted = await RSA.decryptOAEP(
+                              _rawController.text, "", Hash.SHA256, id.priv);
+
+                          setState(() {
+                            _decryptedController.text = decrypted;
+                          });
+                        } on RSAException {
+                          setState(() {
+                            _decryptErr = "Error decrypting message";
+                          });
+                          return;
+                        }
+                      },
+                      child: const Text(
+                        'Decrypt',
+                        style: TextStyle(color: Colours.mintCream),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _decryptedController,
+                      decoration: InputDecoration(
                         filled: true,
                         fillColor: Colours.jet,
                         border: const OutlineInputBorder(),
                         hintText:
-                            "Paste the encrypted message here, then press 'Decrypt'",
+                            "This is the message the sender wanted you to read",
                         hintStyle: const TextStyle(
                             color: Colours.mintCream,
                             overflow: TextOverflow.visible),
                         suffixIcon: IconButton(
-                          icon: const Icon(
-                            Icons.paste,
-                            color: Colours.slateGray,
-                          ),
-                          onPressed: () {
-                            FlutterClipboard.paste()
-                                .then((value) => setState(() {
-                                      _rawController.text = value;
-                                    }));
-                          },
-                        )),
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                  ),
-                  Text(
-                    _decryptErr,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colours.slateGray)),
-                    onPressed: () async {
-                      Identity? id =
-                          await Identities().get(_selectedIdentity) ??
-                              await Identities().get(widget.currIdentity);
-
-                      if (id == null) {
-                        _decryptErr =
-                            "*Please select an identity to use for decryption*";
-                        setState(() {});
-                        return;
-                      }
-
-                      try {
-                        String decrypted = await RSA.decryptOAEP(
-                            _rawController.text, "", Hash.SHA256, id.priv);
-
-                        setState(() {
-                          _decryptedController.text = decrypted;
-                        });
-                      } on RSAException {
-                        _decryptErr =
-                            "*This doesnt seem to be a valid encrypted message*";
-                        setState(() {});
-                        return;
-                      }
-                    },
-                    child: const Text(
-                      'Decrypt',
-                      style: TextStyle(color: Colours.mintCream),
-                    ),
-                  ),
-                  TextFormField(
-                    controller: _decryptedController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colours.jet,
-                      border: const OutlineInputBorder(),
-                      hintText:
-                          "This is the message the sender wanted you to read",
-                      hintStyle: const TextStyle(
-                          color: Colours.mintCream,
-                          overflow: TextOverflow.visible),
-                      suffixIcon: IconButton(
-                          icon: const Icon(
-                            Icons.copy,
-                            color: Colours.slateGray,
-                          ),
-                          onPressed: () {
-                            FlutterClipboard.copy(_decryptedController.text);
-                          }),
-                    ),
-                    maxLines: null,
-                    readOnly: true,
-                  ),
-                  TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colours.slateGray)),
-                    onPressed: () {
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(
-                              currIdentity: widget.currIdentity,
+                            icon: const Icon(
+                              Icons.copy,
+                              color: Colours.slateGray,
                             ),
-                          ),
-                        );
-                      });
-                    },
-                    child: const Text(
-                      "Done",
-                      style: TextStyle(color: Colours.mintCream),
+                            onPressed: () {
+                              FlutterClipboard.copy(_decryptedController.text);
+                            }),
+                      ),
+                      maxLines: null,
+                      readOnly: true,
                     ),
-                  )
-                ]),
+                  ]),
+                ),
               ])),
         ));
   }

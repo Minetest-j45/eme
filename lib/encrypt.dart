@@ -86,9 +86,9 @@ class _EncryptPageState extends State<EncryptPage> {
                         _encryptedController.text = encrypted;
                       });
                     } on RSAException {
-                      _encryptErr =
-                          "*Encryption failed, please try again or try removing and re-adding this persons contact*";
-                      setState(() {});
+                      setState(() {
+                        _encryptErr = "Error encrypting message";
+                      });
                       return;
                     }
                   }),
