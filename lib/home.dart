@@ -52,8 +52,7 @@ class _HomePageState extends State<HomePage>
                 fontWeight: FontWeight.bold, color: Colours.mintCream),
           ),
           subtitle: Text(hashedArr[index],
-              style: const TextStyle(
-                  fontWeight: FontWeight.w400, fontFamily: "monospace")),
+              style: const TextStyle(fontFamily: "monospace")),
           trailing: const Icon(
             Icons.more_vert,
             color: Colours.slateGray,
@@ -108,8 +107,7 @@ class _HomePageState extends State<HomePage>
                 TextSpan(
                     text:
                         "\n${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w400, fontFamily: "monospace"))
+                    style: const TextStyle(fontFamily: "monospace"))
               ],
             ),
           ),

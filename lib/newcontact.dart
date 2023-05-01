@@ -63,7 +63,7 @@ class _NewContactPageState extends State<NewContactPage> {
         if (str == '') {
           return 'Please enter the desired name for this contact';
         }
-        //check if contact already exists
+
         for (var i in usernames) {
           if (i == _controller.value.text) {
             return 'This name already exists';
@@ -102,8 +102,7 @@ class _NewContactPageState extends State<NewContactPage> {
           backgroundColor: Colours.mintCream,
         ),
         Text((await RSA.hash(pub, Hash.SHA256)).substring(0, 7),
-            style: const TextStyle(
-                fontWeight: FontWeight.w400, fontFamily: "monospace")),
+            style: const TextStyle(fontFamily: "monospace")),
         ElevatedButton(
             onPressed: () {
               FlutterClipboard.copy(pub);
@@ -190,7 +189,7 @@ class _NewContactPageState extends State<NewContactPage> {
                                         )),
                               );
                             });
-                          }, //todo
+                          },
                           style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.all(Colours.slateGray)),
@@ -213,7 +212,7 @@ class _NewContactPageState extends State<NewContactPage> {
                                         )),
                               );
                             });
-                          }, //todo
+                          },
                           style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.all(Colours.slateGray)),
@@ -253,7 +252,6 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
   Future<Widget> _hashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
 
-    //test their public key
     try {
       await RSA.encryptOAEP("test", "", Hash.SHA256, widget.theirPub);
     } on RSAException {
