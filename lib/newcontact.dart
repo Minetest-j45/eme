@@ -222,9 +222,13 @@ class _NewContactPageState extends State<NewContactPage> {
                             if (_usernameInputFormKey.currentState!
                                 .validate()) {
                               _usernameInputFormKey.currentState!.save();
+                            } else {
+                              return;
                             }
                             if (_dropDownFormKey.currentState!.validate()) {
                               _dropDownFormKey.currentState!.save();
+                            } else {
+                              return;
                             }
 
                             setState(() {
