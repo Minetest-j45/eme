@@ -93,6 +93,7 @@ class _NewContactPageState extends State<NewContactPage> {
     );
   }
 
+  bool _qrShow = false;
   Future<Widget> _qrImgLoad(context) async {
     var id = await Identities().get(_selectedIdentity);
     if (id == null) {
@@ -102,23 +103,60 @@ class _NewContactPageState extends State<NewContactPage> {
     var pub = id.pub;
 
     return Column(
-      children: [
-        QrImage(
-          data: pub,
-          version: QrVersions.auto,
-          size: MediaQuery.of(context).size.width,
-          backgroundColor: Colours.mintCream,
+      children: <Widget>[
+        Offstage(
+          offstage: _qrShow,
+          child: QrImage(
+            data: pub,
+            version: QrVersions.auto,
+            size: MediaQuery.of(context).size.width,
+            backgroundColor: Colours.mintCream,
+          ),
         ),
-        ElevatedButton(
-            onPressed: () {
-              FlutterClipboard.copy(pub);
-            },
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
-            child: const Icon(
-              Icons.copy,
-              color: Colours.mintCream,
-            )),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            if (_qrShow)
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _qrShow = !_qrShow;
+                    });
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colours.slateGray)),
+                  child: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colours.mintCream,
+                  )),
+            if (!_qrShow)
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _qrShow = !_qrShow;
+                    });
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colours.slateGray)),
+                  child: const Icon(
+                    Icons.keyboard_arrow_up,
+                    color: Colours.mintCream,
+                  )),
+            ElevatedButton(
+                onPressed: () {
+                  FlutterClipboard.copy(pub);
+                },
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Colours.slateGray)),
+                child: const Icon(
+                  Icons.copy,
+                  color: Colours.mintCream,
+                )),
+          ],
+        )
       ],
     );
   }

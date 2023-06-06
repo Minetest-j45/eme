@@ -31,110 +31,113 @@ class _EncryptPageState extends State<EncryptPage> {
           title: const Text('Encrypt'),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("To: ${widget.currContact}"),
-              TextFormField(
-                controller: _rawController,
-                decoration: InputDecoration(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: <Widget>[
+                Text("To: ${widget.currContact}"),
+                TextFormField(
+                  controller: _rawController,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colours.jet,
+                      border: const OutlineInputBorder(),
+                      hintText:
+                          "Type/paste your message here, then press Encrypt",
+                      hintStyle: const TextStyle(
+                          color: Colours.mintCream,
+                          overflow: TextOverflow.visible),
+                      suffixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.paste,
+                          color: Colours.slateGray,
+                        ),
+                        onPressed: () {
+                          FlutterClipboard.paste().then((value) => setState(() {
+                                _rawController.text = value;
+                              }));
+                        },
+                      )),
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                ),
+                Text(
+                  _encryptErr,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colours.slateGray)),
+                    child: const Text(
+                      'Encrypt',
+                      style: TextStyle(color: Colours.mintCream),
+                    ),
+                    onPressed: () async {
+                      Contact? ctact = await Contacts().get(widget.currContact);
+                      if (ctact == null) {
+                        return;
+                      }
+
+                      try {
+                        String encrypted = await RSA.encryptOAEP(
+                            _rawController.text, "", Hash.SHA256, ctact.pub);
+
+                        setState(() {
+                          _encryptedController.text = encrypted;
+                        });
+                      } on RSAException {
+                        setState(() {
+                          _encryptErr = "Error encrypting message";
+                        });
+                        return;
+                      }
+                    }),
+                TextFormField(
+                  controller: _encryptedController,
+                  decoration: InputDecoration(
                     filled: true,
                     fillColor: Colours.jet,
                     border: const OutlineInputBorder(),
-                    hintText:
-                        "Type/paste your message here, then press Encrypt",
+                    hintText: "Copy this text and send it to the recipient",
                     hintStyle: const TextStyle(
                         color: Colours.mintCream,
                         overflow: TextOverflow.visible),
                     suffixIcon: IconButton(
-                      icon: const Icon(
-                        Icons.paste,
-                        color: Colours.slateGray,
-                      ),
-                      onPressed: () {
-                        FlutterClipboard.paste().then((value) => setState(() {
-                              _rawController.text = value;
-                            }));
-                      },
-                    )),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-              ),
-              Text(
-                _encryptErr,
-                style: const TextStyle(color: Colors.red),
-              ),
-              TextButton(
+                        icon: const Icon(
+                          Icons.copy,
+                          color: Colours.slateGray,
+                        ),
+                        onPressed: () {
+                          FlutterClipboard.copy(_encryptedController.text);
+                        }),
+                  ),
+                  maxLines: null,
+                  readOnly: true,
+                ),
+                TextButton(
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colours.slateGray)),
                   child: const Text(
-                    'Encrypt',
+                    "Done",
                     style: TextStyle(color: Colours.mintCream),
                   ),
-                  onPressed: () async {
-                    Contact? ctact = await Contacts().get(widget.currContact);
-                    if (ctact == null) {
-                      return;
-                    }
-
-                    try {
-                      String encrypted = await RSA.encryptOAEP(
-                          _rawController.text, "", Hash.SHA256, ctact.pub);
-
-                      setState(() {
-                        _encryptedController.text = encrypted;
-                      });
-                    } on RSAException {
-                      setState(() {
-                        _encryptErr = "Error encrypting message";
-                      });
-                      return;
-                    }
-                  }),
-              TextFormField(
-                controller: _encryptedController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colours.jet,
-                  border: const OutlineInputBorder(),
-                  hintText: "Copy this text and send it to the recipient",
-                  hintStyle: const TextStyle(
-                      color: Colours.mintCream, overflow: TextOverflow.visible),
-                  suffixIcon: IconButton(
-                      icon: const Icon(
-                        Icons.copy,
-                        color: Colours.slateGray,
-                      ),
-                      onPressed: () {
-                        FlutterClipboard.copy(_encryptedController.text);
-                      }),
-                ),
-                maxLines: null,
-                readOnly: true,
-              ),
-              TextButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colours.slateGray)),
-                child: const Text(
-                  "Done",
-                  style: TextStyle(color: Colours.mintCream),
-                ),
-                onPressed: () {
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(
-                          currIdentity: widget.currIdentity,
+                  onPressed: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(
+                            currIdentity: widget.currIdentity,
+                          ),
                         ),
-                      ),
-                    );
-                  });
-                },
-              )
-            ],
+                      );
+                    });
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'identities.dart';
 
-void confirmation(
+void rmAllConfirmation(
     BuildContext context, String mainText, subtitle, void setStateFunc) {
   showDialog(
     context: context,

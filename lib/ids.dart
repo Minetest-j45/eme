@@ -1,4 +1,5 @@
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'colours.dart';
@@ -22,12 +23,12 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
     var identities = await Identities().nameArr();
     return Form(
       key: _usernameInputFormKey,
-      autovalidateMode: AutovalidateMode.always,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: TextFormField(
-        autovalidateMode: AutovalidateMode.always,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (str) {
           if (str == '') {
-            return 'Please enter the desired name for this new contact';
+            return 'Please enter the desired name for this new identity';
           } else if (str!.contains('|')) {
             return 'Disallowed character: |';
           }
@@ -59,7 +60,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
         theme: Colours.theme,
         home: Scaffold(
           appBar: AppBar(
-            title: const Text('Generate a new keypair'),
+            title: const Text('New Identity'),
           ),
           body: Center(
             child: Column(
@@ -110,7 +111,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                       backgroundColor:
                           MaterialStateProperty.all(Colours.slateGray)),
                   child: const Text(
-                    'Generate new pair',
+                    'Generate new keypair',
                     style: TextStyle(color: Colours.mintCream),
                   ),
                   onPressed: () async {
@@ -140,6 +141,45 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     });
                   },
                 ),
+                const Text("or",
+                    style: const TextStyle(color: Colours.mintCream)),
+                TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colours.slateGray)),
+                    onPressed: () async {
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles();
+
+                      if (result != null) {
+                        var priv = result.files.first.bytes!.toString();
+                        var pub = await RSA.convertPrivateKeyToPublicKey(priv);
+                        try {
+                          await RSA.encryptOAEP("test", "", Hash.SHA256, pub);
+                        } on RSAException {
+                          AlertDialog(
+                              title:
+                                  const Text("Error with uploaded private key"),
+                              content: const Text(
+                                  "Please make sure it is PEM encoded in a file with nothing else"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      //todo: setstate to new contact again
+                                    },
+                                    child: const Text("Okay")),
+                              ]);
+                        }
+                        //todo: add to identities and go to home page
+                      } else {
+                        // User canceled the picker
+                      }
+                    },
+                    child: const Text(
+                      "Upload private key",
+                      style: TextStyle(color: Colours.mintCream),
+                    )),
               ],
             ),
           ),
@@ -211,7 +251,7 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                         MaterialStateProperty.all(Colours.mintCream),
                   ),
                   onPressed: () {
-                    confirmation(
+                    rmAllConfirmation(
                         context,
                         "Are you sure you want to delete all your identities",
                         "This action can not be undone",
