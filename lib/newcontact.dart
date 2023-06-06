@@ -27,7 +27,7 @@ class _NewContactPageState extends State<NewContactPage> {
 
     return Form(
       key: _dropDownFormKey,
-      autovalidateMode: AutovalidateMode.always,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: DropdownButtonFormField(
@@ -65,7 +65,7 @@ class _NewContactPageState extends State<NewContactPage> {
     var usernames = await Contacts().nameArr();
     return Form(
       key: _usernameInputFormKey,
-      autovalidateMode: AutovalidateMode.always,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: TextFormField(
         validator: (str) {
           if (str == '') {
@@ -109,8 +109,6 @@ class _NewContactPageState extends State<NewContactPage> {
           size: MediaQuery.of(context).size.width,
           backgroundColor: Colours.mintCream,
         ),
-        Text((await RSA.hash(pub, Hash.SHA256)).substring(0, 7),
-            style: const TextStyle(fontFamily: "monospace")),
         ElevatedButton(
             onPressed: () {
               FlutterClipboard.copy(pub);
@@ -157,6 +155,10 @@ class _NewContactPageState extends State<NewContactPage> {
                           },
                         ),
                       ),
+                      const Divider(
+                        thickness: 2,
+                        color: Colours.raisinBlack,
+                      ),
                       FutureBuilder(
                         future: _identitiesDropDown(context),
                         builder: (context, snapshot) {
@@ -182,73 +184,78 @@ class _NewContactPageState extends State<NewContactPage> {
                         },
                       ),
                     ]),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                        Widget>[
-                      ElevatedButton(
-                          onPressed: () {
-                            if (_usernameInputFormKey.currentState!
-                                .validate()) {
-                              _usernameInputFormKey.currentState!.save();
-                            } else {
-                              return;
-                            }
-                            if (_dropDownFormKey.currentState!.validate()) {
-                              _dropDownFormKey.currentState!.save();
-                            } else {
-                              return;
-                            }
+                    const Divider(
+                      thickness: 2,
+                      color: Colours.raisinBlack,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          ElevatedButton(
+                              onPressed: () {
+                                if (_usernameInputFormKey.currentState!
+                                    .validate()) {
+                                  _usernameInputFormKey.currentState!.save();
+                                } else {
+                                  return;
+                                }
+                                if (_dropDownFormKey.currentState!.validate()) {
+                                  _dropDownFormKey.currentState!.save();
+                                } else {
+                                  return;
+                                }
 
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => QRScanPage(
-                                          name: _controller.value.text,
-                                          linkedIdentity: _selectedIdentity,
-                                        )),
-                              );
-                            });
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colours.slateGray)),
-                          child: const Icon(
-                            Icons.camera_alt_outlined,
-                            color: Colours.mintCream,
-                          )),
-                      ElevatedButton(
-                          onPressed: () {
-                            if (_usernameInputFormKey.currentState!
-                                .validate()) {
-                              _usernameInputFormKey.currentState!.save();
-                            } else {
-                              return;
-                            }
-                            if (_dropDownFormKey.currentState!.validate()) {
-                              _dropDownFormKey.currentState!.save();
-                            } else {
-                              return;
-                            }
+                                setState(() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => QRScanPage(
+                                              name: _controller.value.text,
+                                              linkedIdentity: _selectedIdentity,
+                                            )),
+                                  );
+                                });
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colours.slateGray)),
+                              child: const Icon(
+                                Icons.camera_alt_outlined,
+                                color: Colours.mintCream,
+                              )),
+                          ElevatedButton(
+                              onPressed: () {
+                                if (_usernameInputFormKey.currentState!
+                                    .validate()) {
+                                  _usernameInputFormKey.currentState!.save();
+                                } else {
+                                  return;
+                                }
+                                if (_dropDownFormKey.currentState!.validate()) {
+                                  _dropDownFormKey.currentState!.save();
+                                } else {
+                                  return;
+                                }
 
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ManualAddPage(
-                                          name: _controller.value.text,
-                                          linkedIdentity: _selectedIdentity,
-                                        )),
-                              );
-                            });
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colours.slateGray)),
-                          child: const Icon(
-                            Icons.paste,
-                            color: Colours.mintCream,
-                          )),
-                    ]),
+                                setState(() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ManualAddPage(
+                                              name: _controller.value.text,
+                                              linkedIdentity: _selectedIdentity,
+                                            )),
+                                  );
+                                });
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colours.slateGray)),
+                              child: const Icon(
+                                Icons.paste,
+                                color: Colours.mintCream,
+                              )),
+                        ]),
                   ],
                 ),
               ),
@@ -287,6 +294,22 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
     return Column(children: [
       Text(
           "My public key summary (hash): ${(await RSA.hash(id!.pub, Hash.SHA256)).substring(0, 7)}"),
+      QrImage(
+        data: id.pub,
+        version: QrVersions.auto,
+        size: MediaQuery.of(context).size.width,
+        backgroundColor: Colours.mintCream,
+      ),
+      ElevatedButton(
+          onPressed: () {
+            FlutterClipboard.copy(id.pub);
+          },
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
+          child: const Icon(
+            Icons.copy,
+            color: Colours.mintCream,
+          )),
       Text(
         "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
         style: TextStyle(color: _err == "" ? Colours.mintCream : Colors.red),
@@ -359,8 +382,9 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                HomePage(currIdentity: widget.linkedIdentity)),
+                            builder: (context) => HomePage(
+                                  currIdentity: widget.linkedIdentity,
+                                )),
                       );
                     });
                   },

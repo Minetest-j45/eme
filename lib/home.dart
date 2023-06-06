@@ -170,6 +170,7 @@ class _HomePageState extends State<HomePage>
     if (widget.currIdentity == '') {
       nicename = " all:";
     }
+
     return MaterialApp(
         theme: Colours.theme,
         home: DefaultTabController(
@@ -407,6 +408,8 @@ class _HomePageState extends State<HomePage>
                         if (id == null) {
                           return;
                         }
+
+                        _decryptedController.text = "Loading...";
 
                         try {
                           String decrypted = await RSA.decryptOAEP(
