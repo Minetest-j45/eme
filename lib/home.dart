@@ -302,48 +302,44 @@ class _HomePageState extends State<HomePage>
                 ),
               )),
               body: TabBarView(children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'Contacts for$nicename',
-                        style: const TextStyle(
-                            fontSize: 26,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      FutureBuilder(
-                        future: _contactList(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return snapshot.data!;
-                          } else if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
-                          }
+                Scaffold(
+                  body: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Contacts for$nicename',
+                          style: const TextStyle(
+                              fontSize: 26,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        FutureBuilder(
+                          future: _contactList(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return snapshot.data!;
+                            } else if (snapshot.hasError) {
+                              return Text("${snapshot.error}");
+                            }
 
-                          return const CircularProgressIndicator();
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FloatingActionButton(
-                            child: const Icon(Icons.person_add_alt_1),
-                            onPressed: () {
-                              setState(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NewContactPage()),
-                                );
-                              });
-                            },
-                          ),
-                        ],
-                      )
-                    ],
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  floatingActionButton: FloatingActionButton(
+                    child: const Icon(Icons.person_add_alt_1),
+                    onPressed: () {
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const NewContactPage()),
+                        );
+                      });
+                    },
                   ),
                 ),
                 SingleChildScrollView(
