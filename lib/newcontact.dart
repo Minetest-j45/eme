@@ -96,7 +96,7 @@ class _NewContactPageState extends State<NewContactPage> {
   Future<Widget> _qrImgLoad(context) async {
     var id = await Identities().get(_selectedIdentity);
     if (id == null) {
-      return Column();
+      return const Column();
     }
 
     var pub = id.pub;

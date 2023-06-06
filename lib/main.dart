@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
         future: _isFirst(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print(snapshot.data);
             if (snapshot.data!) {
               return const MaterialApp(
                 title: 'EME',
@@ -36,12 +35,7 @@ class MyApp extends StatelessWidget {
               );
             }
           } else {
-            return const MaterialApp(
-              title: 'EME',
-              home: HomePage(
-                currIdentity: "",
-              ),
-            );
+            return const CircularProgressIndicator();
           }
         });
   }
