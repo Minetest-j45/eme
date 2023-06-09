@@ -152,10 +152,12 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                           await FilePicker.platform.pickFiles();
 
                       if (result != null) {
-                        var priv = result.files.first.bytes!.toString();
-                        var pub = await RSA.convertPrivateKeyToPublicKey(priv);
+                        var private = result.files.first.bytes!.toString();
+                        var public =
+                            await RSA.convertPrivateKeyToPublicKey(private);
                         try {
-                          await RSA.encryptOAEP("test", "", Hash.SHA256, pub);
+                          await RSA.encryptOAEP(
+                              "test", "", Hash.SHA256, public);
                         } on RSAException {
                           AlertDialog(
                               title:
@@ -171,7 +173,22 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                                     child: const Text("Okay")),
                               ]);
                         }
-                        //todo: add to identities and go to home page
+
+                        Identities().add(Identity(
+                            name: nameController.value.text,
+                            pub: public,
+                            priv: private));
+
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomePage(
+                                currIdentity: "",
+                              ),
+                            ),
+                          );
+                        });
                       } else {
                         // User canceled the picker
                       }
