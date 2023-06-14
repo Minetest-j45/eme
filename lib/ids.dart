@@ -106,7 +106,8 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     ),
                   ],
                 ),
-                TextButton(
+                SingleTapButton(
+                  delay: 10,
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colours.slateGray)),
@@ -228,8 +229,9 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
               color: Colours.slateGray,
             ),
             onPressed: () {
-              Identities().rm(identitiesArr[index]);
-              setState(() {});
+              setState(() {
+                Identities().rm(identitiesArr[index]);
+              });
             },
           ),
         );
@@ -271,10 +273,17 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                     rmAllConfirmation(
                         context,
                         "Are you sure you want to delete all your identities",
-                        "This action can not be undone",
-                        setState(
-                          () {},
-                        ));
+                        "This action can not be undone", setState(
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePage(
+                                    currIdentity: "",
+                                  )),
+                        );
+                      },
+                    ));
                   },
                   child: const Text("Delete all my identities"))
             ],
