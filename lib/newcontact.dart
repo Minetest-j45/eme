@@ -329,9 +329,15 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
       _err = "Error while testing their public key";
     }
 
+    if (id == null) {
+      return const Column(
+        children: [Text("Error")],
+      );
+    }
+
     return Column(children: [
       Text(
-          "My public key summary (hash): ${(await RSA.hash(id!.pub, Hash.SHA256)).substring(0, 7)}"),
+          "My public key summary (hash): ${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}"),
       QrImage(
         data: id.pub,
         version: QrVersions.auto,

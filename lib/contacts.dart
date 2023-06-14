@@ -83,4 +83,8 @@ class Contacts {
 
     return null;
   }
+
+  void rmAll() {
+    _write([]);
+  }
 }

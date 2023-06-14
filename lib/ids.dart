@@ -270,20 +270,41 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                         MaterialStateProperty.all(Colours.mintCream),
                   ),
                   onPressed: () {
-                    rmAllConfirmation(
-                        context,
-                        "Are you sure you want to delete all your identities",
-                        "This action can not be undone", setState(
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomePage(
-                                    currIdentity: "",
-                                  )),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext ctx) {
+                        return AlertDialog(
+                          title: const Text(
+                              "Are you sure you want to delete all your identities"),
+                          content: const Text("This action can not be undone"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Identities().rmAll();
+
+                                  setState(
+                                    () {
+                                      Navigator.of(context).pop();
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const NewIdentityPage()),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text("Yes")),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("No")),
+                          ],
                         );
                       },
-                    ));
+                    );
                   },
                   child: const Text("Delete all my identities"))
             ],

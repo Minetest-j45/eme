@@ -8,6 +8,7 @@ import 'encrypt.dart';
 import 'identities.dart';
 import 'ids.dart';
 import 'newcontact.dart';
+import 'settings.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.currIdentity});
@@ -185,13 +186,13 @@ class _HomePageState extends State<HomePage>
                         color: Colours.slateGray,
                       ),
                       onPressed: () {
-                        /*setState(() {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsPage()),
-                );
-              });*/
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SettingsPage()),
+                          );
+                        });
                       },
                     ),
                   ],

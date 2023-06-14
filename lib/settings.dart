@@ -1,5 +1,11 @@
 import 'dart:convert';
 
+import 'package:eme/ids.dart';
+import 'package:flutter/material.dart';
+
+import 'colours.dart';
+import 'contacts.dart';
+import 'identities.dart';
 import 'storage.dart';
 
 class Setting {
@@ -47,5 +53,78 @@ class Settings {
     }
 
     await Storage().write('settings', jsonEncode(json));
+  }
+}
+
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: Colours.theme,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Settings'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                    foregroundColor:
+                        MaterialStateProperty.all(Colours.mintCream),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext ctx) {
+                        return AlertDialog(
+                          title: const Text(
+                              "Are you sure you want to delete all your identities and contacts"),
+                          content: const Text("This action can not be undone"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Identities().rmAll();
+                                  Contacts().rmAll();
+
+                                  setState(
+                                    () {
+                                      Navigator.of(context).pop();
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const NewIdentityPage()),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text("Yes")),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("No")),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Text("Delete all"))
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
