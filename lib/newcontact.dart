@@ -320,7 +320,7 @@ class ConfirmContactPage extends StatefulWidget {
 class _ConfirmContactPageState extends State<ConfirmContactPage> {
   String _err = "";
 
-  bool _qrShow = false;
+  bool _qrShow = true;
   Future<Widget> _hashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
 
@@ -388,43 +388,43 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
               color: Colours.mintCream,
             )),
       ]),
+      const Divider(
+        thickness: 2,
+        color: Colours.raisinBlack,
+      ),
       Text(
         "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
         style: TextStyle(color: _err == "" ? Colours.mintCream : Colors.red),
       ),
-    ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: Colours.theme,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Confirm new contact:'),
+      const Divider(
+        thickness: 2,
+        color: Colours.raisinBlack,
+      ),
+      Text(
+        _err,
+        style: const TextStyle(color: Colors.red),
+      ),
+      if (_err != "") ...[
+        TextButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
+          onPressed: () {
+            setState(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NewContactPage()),
+              );
+            });
+          },
+          child: const Text(
+            "Start again",
+            style: TextStyle(color: Colours.mintCream),
+          ),
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      ] else ...[
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text("New contact name: ${widget.name}"),
-              Text("Linked identity: ${widget.linkedIdentity}"),
-              FutureBuilder(
-                future: _hashLoad(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data!;
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-
-                  return const CircularProgressIndicator();
-                },
-              ),
-              Text(
-                _err,
-                style: const TextStyle(color: Colors.red),
-              ),
               TextButton(
                 style: ButtonStyle(
                     backgroundColor:
@@ -470,6 +470,41 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                     "Confirm",
                     style: TextStyle(color: Colours.mintCream),
                   )),
+            ]),
+      ]
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: Colours.theme,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Confirm new contact:'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("New contact name: ${widget.name}"),
+              Text("Linked identity: ${widget.linkedIdentity}"),
+              const Divider(
+                thickness: 2,
+                color: Colours.raisinBlack,
+              ),
+              FutureBuilder(
+                future: _hashLoad(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+
+                  return const CircularProgressIndicator();
+                },
+              ),
             ],
           ),
         ),
