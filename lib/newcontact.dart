@@ -320,6 +320,7 @@ class ConfirmContactPage extends StatefulWidget {
 class _ConfirmContactPageState extends State<ConfirmContactPage> {
   String _err = "";
 
+  bool _qrShow = false;
   Future<Widget> _hashLoad() async {
     var id = await Identities().get(widget.linkedIdentity);
 
@@ -338,22 +339,55 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
     return Column(children: [
       Text(
           "My public key summary (hash): ${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}"),
-      QrImage(
-        data: id.pub,
-        version: QrVersions.auto,
-        size: MediaQuery.of(context).size.width,
-        backgroundColor: Colours.mintCream,
+      Offstage(
+        offstage: _qrShow,
+        child: QrImage(
+          data: id.pub,
+          version: QrVersions.auto,
+          size: MediaQuery.of(context).size.width,
+          backgroundColor: Colours.mintCream,
+        ),
       ),
-      ElevatedButton(
-          onPressed: () {
-            FlutterClipboard.copy(id.pub);
-          },
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
-          child: const Icon(
-            Icons.copy,
-            color: Colours.mintCream,
-          )),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+        if (_qrShow)
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _qrShow = !_qrShow;
+                });
+              },
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colours.slateGray)),
+              child: const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colours.mintCream,
+              )),
+        if (!_qrShow)
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _qrShow = !_qrShow;
+                });
+              },
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colours.slateGray)),
+              child: const Icon(
+                Icons.keyboard_arrow_up,
+                color: Colours.mintCream,
+              )),
+        ElevatedButton(
+            onPressed: () {
+              FlutterClipboard.copy(id.pub);
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
+            child: const Icon(
+              Icons.copy,
+              color: Colours.mintCream,
+            )),
+      ]),
       Text(
         "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
         style: TextStyle(color: _err == "" ? Colours.mintCream : Colors.red),
