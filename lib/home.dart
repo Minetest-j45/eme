@@ -61,11 +61,31 @@ class _HomePageState extends State<HomePage>
               PopupMenuButton<int>(
             onSelected: (value) {
               if (value == 1) {
-                //todo: confirmation
-
-                setState(() {
-                  Contacts().rm(filtered[index]);
-                });
+                showDialog(
+                  context: context,
+                  builder: (BuildContext ctx) {
+                    return AlertDialog(
+                      title: Text(
+                          "Are you sure you want to delete ${filtered[index].name}?"),
+                      content: const Text("This action can not be undone"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              setState(() {
+                                Contacts().rm(filtered[index]);
+                                Navigator.of(ctx).pop();
+                              });
+                            },
+                            child: const Text("Yes")),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(ctx).pop();
+                            },
+                            child: const Text("No")),
+                      ],
+                    );
+                  },
+                );
               }
             },
             itemBuilder: (context) => [
