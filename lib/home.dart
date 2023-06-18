@@ -54,9 +54,34 @@ class _HomePageState extends State<HomePage>
           ),
           subtitle: Text(hashedArr[index],
               style: const TextStyle(fontFamily: "monospace")),
-          trailing: const Icon(
+          trailing: /*const Icon(
             Icons.more_vert,
             color: Colours.slateGray,
+          ),*/
+              PopupMenuButton<int>(
+            onSelected: (value) {
+              if (value == 1) {
+                //todo: confirmation
+
+                setState(() {
+                  Contacts().rm(filtered[index]);
+                });
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 1,
+                child: Row(
+                  children: [
+                    Icon(Icons.delete),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text("Delete")
+                  ],
+                ),
+              ),
+            ],
           ),
           onTap: () {
             Navigator.push(
@@ -67,13 +92,6 @@ class _HomePageState extends State<HomePage>
                         currIdentity: widget.currIdentity,
                       )),
             );
-          },
-          onLongPress: () {
-            //some sort of confirmation dialog
-            setState(() {
-              Contacts().rm(filtered[index]);
-              setState(() {});
-            });
           },
         );
       },
