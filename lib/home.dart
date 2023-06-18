@@ -54,11 +54,8 @@ class _HomePageState extends State<HomePage>
           ),
           subtitle: Text(hashedArr[index],
               style: const TextStyle(fontFamily: "monospace")),
-          trailing: /*const Icon(
-            Icons.more_vert,
+          trailing: PopupMenuButton<int>(
             color: Colours.slateGray,
-          ),*/
-              PopupMenuButton<int>(
             onSelected: (value) {
               if (value == 1) {
                 showDialog(
@@ -93,11 +90,14 @@ class _HomePageState extends State<HomePage>
                 value: 1,
                 child: Row(
                   children: [
-                    Icon(Icons.delete),
+                    Icon(Icons.delete, color: Colors.red),
                     SizedBox(
                       width: 10,
                     ),
-                    Text("Delete")
+                    Text(
+                      "Delete",
+                      style: TextStyle(color: Colours.mintCream),
+                    )
                   ],
                 ),
               ),

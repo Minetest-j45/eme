@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -142,54 +144,62 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     });
                   },
                 ),
-                const Text("or",
-                    style: const TextStyle(color: Colours.mintCream)),
+                const Text("or", style: TextStyle(color: Colours.mintCream)),
                 TextButton(
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colours.slateGray)),
                     onPressed: () async {
                       FilePickerResult? result =
-                          await FilePicker.platform.pickFiles();
+                          await FilePicker.platform.pickFiles(withData: true);
 
                       if (result != null) {
-                        var private = result.files.first.bytes!.toString();
-                        var public =
-                            await RSA.convertPrivateKeyToPublicKey(private);
+                        var private = utf8.decode(result.files.first.bytes!);
+                        String public = "";
+
                         try {
+                          public =
+                              await RSA.convertPrivateKeyToPublicKey(private);
+
                           await RSA.encryptOAEP(
                               "test", "", Hash.SHA256, public);
-                        } on RSAException {
-                          AlertDialog(
-                              title:
-                                  const Text("Error with uploaded private key"),
-                              content: const Text(
-                                  "Please make sure it is PEM encoded in a file with nothing else"),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      //todo: setstate to new contact again
-                                    },
-                                    child: const Text("Okay")),
-                              ]);
-                        }
+                        } on RSAException {}
 
-                        Identities().add(Identity(
-                            name: nameController.value.text,
-                            pub: public,
-                            priv: private));
+                        if (public != "") {
+                          Identities().add(Identity(
+                              name: nameController.value.text,
+                              pub: public,
+                              priv: private));
 
-                        setState(() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomePage(
-                                currIdentity: "",
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(
+                                  currIdentity: "",
+                                ),
                               ),
-                            ),
+                            );
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext ctx) {
+                              return AlertDialog(
+                                  title: const Text(
+                                      "Error with uploaded private key"),
+                                  content: const Text(
+                                      "Please make sure it is PEM encoded in a file with nothing else"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                        },
+                                        child: const Text("Okay")),
+                                  ]);
+                            },
                           );
-                        });
+                        }
                       } else {
                         // User canceled the picker
                       }

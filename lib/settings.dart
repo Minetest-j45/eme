@@ -98,7 +98,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                   setState(
                                     () {
-                                      Navigator.of(context).pop();
+                                      Navigator.of(ctx).pop();
 
                                       Navigator.push(
                                         context,
@@ -112,7 +112,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 child: const Text("Yes")),
                             TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).pop();
+                                  Navigator.of(ctx).pop();
                                 },
                                 child: const Text("No")),
                           ],
