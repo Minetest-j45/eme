@@ -37,7 +37,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
 
           for (var i in identities) {
             if (i == nameController.value.text) {
-              return "This name already exists";
+              return "An identity with this name already exists";
             }
           }
 
