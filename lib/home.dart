@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage>
       padding: const EdgeInsets.all(16.0),
       child: Form(
         key: _dropDownFormKey,
-        autovalidateMode: AutovalidateMode.always,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: DropdownButtonFormField(
           iconEnabledColor: Colours.slateGray,
           dropdownColor: Colours.jet,
@@ -177,11 +177,9 @@ class _HomePageState extends State<HomePage>
           validator: (value) => value == null
               ? "Please select the identity you want to use for decryption"
               : null,
-          hint: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.65,
-            child: const Text(
-              "Identity to use for decryption",
-              style: TextStyle(color: Colours.mintCream),
+          hint: const Text(
+            "Identity to use for decryption",
+            style: TextStyle(color: Colours.mintCream),
             ),
           ),
           items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
