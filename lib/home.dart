@@ -170,6 +170,7 @@ class _HomePageState extends State<HomePage>
         key: _dropDownFormKey,
         autovalidateMode: AutovalidateMode.always,
         child: DropdownButtonFormField(
+          iconEnabledColor: Colours.slateGray,
           dropdownColor: Colours.jet,
           borderRadius: BorderRadius.circular(10),
           value: _selectedIdentity == "" ? null : _selectedIdentity,
