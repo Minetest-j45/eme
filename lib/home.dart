@@ -180,7 +180,6 @@ class _HomePageState extends State<HomePage>
           hint: const Text(
             "Identity to use for decryption",
             style: TextStyle(color: Colours.mintCream),
-            ),
           ),
           items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
