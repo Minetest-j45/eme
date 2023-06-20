@@ -261,6 +261,7 @@ class _NewContactPageState extends State<NewContactPage> {
                                 Icons.camera_alt_outlined,
                                 color: Colours.mintCream,
                               )),
+                          const Text("or"),
                           ElevatedButton(
                               onPressed: () {
                                 if (_usernameInputFormKey.currentState!

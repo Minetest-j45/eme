@@ -190,21 +190,19 @@ class _ManualAddPageState extends State<ManualAddPage> {
                             MaterialStateProperty.all(Colours.mintCream),
                       ),
                       onPressed: () => AppSettings.openAppSettings(),
-                      child: Row(
+                      child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            const Icon(Icons.perm_device_info),
-                            SizedBox(
-                                width:
-                                    MediaQuery.of(context).size.width * 0.01),
-                            const Text("Allow camera permission"),
+                            Icon(Icons.perm_device_info),
+                            SizedBox(width: 5),
+                            Text("Allow camera permission"),
                           ])),
                   TextButton(
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colours.slateGray),
-                      foregroundColor:q
+                      foregroundColor:
                           MaterialStateProperty.all(Colours.mintCream),
                     ),
                     onPressed: () => setState(() {
@@ -218,12 +216,11 @@ class _ManualAddPageState extends State<ManualAddPage> {
                                 )),
                       );
                     }),
-                    child: Row(
+                    child: const Row(
                       children: <Widget>[
-                        const Icon(Icons.camera_alt_outlined),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.01),
-                        const Text("Scan QR code"),
+                        Icon(Icons.camera_alt_outlined),
+                        SizedBox(width: 5),
+                        Text("Scan QR code"),
                       ],
                     ),
                   )

@@ -61,25 +61,27 @@ class _HomePageState extends State<HomePage>
                 showDialog(
                   context: context,
                   builder: (BuildContext ctx) {
-                    return AlertDialog(
-                      title: Text(
-                          "Are you sure you want to delete ${filtered[index].name}?"),
-                      content: const Text("This action can not be undone"),
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              setState(() {
-                                Contacts().rm(filtered[index]);
+                    return MaterialApp(
+                      home: AlertDialog(
+                        title: Text(
+                            "Are you sure you want to delete ${filtered[index].name}?"),
+                        content: const Text("This action can not be undone"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  Contacts().rm(filtered[index]);
+                                  Navigator.of(ctx).pop();
+                                });
+                              },
+                              child: const Text("Yes")),
+                          TextButton(
+                              onPressed: () {
                                 Navigator.of(ctx).pop();
-                              });
-                            },
-                            child: const Text("Yes")),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(ctx).pop();
-                            },
-                            child: const Text("No")),
-                      ],
+                              },
+                              child: const Text("No")),
+                        ],
+                      ),
                     );
                   },
                 );
@@ -92,7 +94,7 @@ class _HomePageState extends State<HomePage>
                   children: [
                     Icon(Icons.delete, color: Colors.red),
                     SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
                     Text(
                       "Delete",
