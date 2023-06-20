@@ -195,7 +195,7 @@ class _ManualAddPageState extends State<ManualAddPage> {
                         const Icon(Icons.perm_device_info),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.01),
-                        const Text("Enable camera permissions"),
+                        const Text("Allow camera permission"),
                       ])),
               SizedBox(width: MediaQuery.of(context).size.width * 0.05),
               TextButton(
