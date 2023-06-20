@@ -179,50 +179,55 @@ class _ManualAddPageState extends State<ManualAddPage> {
             child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(children: <Widget>[
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              TextButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colours.slateGray),
-                    foregroundColor:
-                        MaterialStateProperty.all(Colours.mintCream),
-                  ),
-                  onPressed: () => AppSettings.openAppSettings(),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colours.slateGray),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colours.mintCream),
+                      ),
+                      onPressed: () => AppSettings.openAppSettings(),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Icon(Icons.perm_device_info),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.01),
+                            const Text("Allow camera permission"),
+                          ])),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colours.slateGray),
+                      foregroundColor:q
+                          MaterialStateProperty.all(Colours.mintCream),
+                    ),
+                    onPressed: () => setState(() {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => QRScanPage(
+                                  name: widget.name,
+                                  linkedIdentity: widget.linkedIdentity,
+                                )),
+                      );
+                    }),
+                    child: Row(
                       children: <Widget>[
-                        const Icon(Icons.perm_device_info),
+                        const Icon(Icons.camera_alt_outlined),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.01),
-                        const Text("Allow camera permission"),
-                      ])),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-              TextButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colours.slateGray),
-                  foregroundColor: MaterialStateProperty.all(Colours.mintCream),
-                ),
-                onPressed: () => setState(() {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => QRScanPage(
-                              name: widget.name,
-                              linkedIdentity: widget.linkedIdentity,
-                            )),
-                  );
-                }),
-                child: Row(
-                  children: <Widget>[
-                    const Icon(Icons.camera_alt_outlined),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                    const Text("Scan QR code"),
-                  ],
-                ),
-              )
-            ]),
+                        const Text("Scan QR code"),
+                      ],
+                    ),
+                  )
+                ]),
             TextFormField(
               controller: _pubController,
               maxLines: null,
