@@ -47,22 +47,19 @@ class _QRScanPageState extends State<QRScanPage> {
                 child: Row(
                   children: <Widget>[
                     ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colours.slateGray)),
                         onPressed: () async {
                           await controller?.flipCamera();
                           setState(() {});
                         },
-                        child: const Text('Flip camera',
-                            style: TextStyle(color: Colours.mintCream))),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.05,
-                    ),
-                    ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all(Colours.slateGray)),
+                        child: const Icon(Icons.flip_camera_android,
+                            color: Colours.mintCream)),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.1,
+                    ),
+                    ElevatedButton(
                         onPressed: () async {
                           setState(() {
                             Navigator.pop(context);
@@ -76,8 +73,11 @@ class _QRScanPageState extends State<QRScanPage> {
                             );
                           });
                         },
-                        child: const Text('Paste instead',
-                            style: TextStyle(color: Colours.mintCream))),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colours.slateGray)),
+                        child:
+                            const Icon(Icons.paste, color: Colours.mintCream)),
                   ],
                 ),
               ),
