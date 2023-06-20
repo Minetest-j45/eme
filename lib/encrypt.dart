@@ -69,10 +69,19 @@ class _EncryptPageState extends State<EncryptPage> {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colours.slateGray)),
-                    child: const Text(
-                      'Encrypt',
-                      style: TextStyle(color: Colours.mintCream),
-                    ),
+                    child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.lock_outline,
+                            color: Colours.mintCream,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            'Encrypt',
+                            style: TextStyle(color: Colours.mintCream),
+                          )
+                        ]),
                     onPressed: () async {
                       Contact? ctact = await Contacts().get(widget.currContact);
                       if (ctact == null) {
