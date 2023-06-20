@@ -28,14 +28,13 @@ class _EncryptPageState extends State<EncryptPage> {
       theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Encrypt'),
+          title: Text('Encrypt for: ${widget.currContact}'),
         ),
         body: Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               children: <Widget>[
-                Text("To: ${widget.currContact}"),
                 TextFormField(
                   controller: _rawController,
                   decoration: InputDecoration(
