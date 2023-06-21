@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage>
                     return MaterialApp(
                       home: AlertDialog(
                         title: Text(
-                            "Are you sure you want to delete ${filtered[index].name}?"),
+                            "Are you sure you want to remove ${filtered[index].name}?"),
                         content: const Text("This action can not be undone"),
                         actions: [
                           TextButton(
@@ -87,8 +87,8 @@ class _HomePageState extends State<HomePage>
                   },
                 );
               } else if (value == 2) {
-                final _renameForm = GlobalKey<FormState>();
-                final TextEditingController _renameField =
+                final renameForm = GlobalKey<FormState>();
+                final TextEditingController renameField =
                     TextEditingController(text: "");
 
                 showDialog(
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage>
                       home: AlertDialog(
                         title: Text('Rename ${filtered[index].name}:'),
                         content: Form(
-                          key: _renameForm,
+                          key: renameForm,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           child: TextFormField(
                             validator: (str) {
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage>
 
                               return null;
                             },
-                            controller: _renameField,
+                            controller: renameField,
                             decoration: InputDecoration(
                               hintText:
                                   'Enter the new name for ${filtered[index].name}',
@@ -131,15 +131,15 @@ class _HomePageState extends State<HomePage>
                           TextButton(
                             child: const Text('Ok'),
                             onPressed: () async {
-                              if (_renameForm.currentState!.validate()) {
-                                _renameForm.currentState!.save();
+                              if (renameForm.currentState!.validate()) {
+                                renameForm.currentState!.save();
                               } else {
                                 return;
                               }
 
                               setState(() {
                                 Contacts().rename(
-                                    filtered[index].name, _renameField.text);
+                                    filtered[index].name, renameField.text);
                               });
                               Navigator.pop(ctx);
                             },
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage>
                       width: 5,
                     ),
                     Text(
-                      "Delete",
+                      "Remove",
                       style: TextStyle(color: Colours.mintCream),
                     )
                   ],
