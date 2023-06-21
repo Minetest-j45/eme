@@ -21,38 +21,8 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   List<String> keySizeOptions = <String>["2048", "3072", "4096"];
   final _usernameInputFormKey = GlobalKey<FormState>();
 
-  Future<Widget> _usernameInput() async {
-    var identities = await Identities().nameArr();
-    return Form(
-      key: _usernameInputFormKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (str) {
-          if (str == '') {
-            return 'Please enter the desired name for this new identity';
-          } else if (str!.contains('|')) {
-            return 'Disallowed character: |';
-          }
-
-          for (var i in identities) {
-            if (i == nameController.value.text) {
-              return "An identity with this name already exists";
-            }
-          }
-
-          return null;
-        },
-        controller: nameController,
-        decoration: const InputDecoration(
-          filled: true,
-          fillColor: Colours.jet,
-          border: OutlineInputBorder(),
-          hintText: 'Enter the desired username for this identity',
-          hintStyle: TextStyle(color: Colours.mintCream),
-        ),
-      ),
-    );
+  Future<List<String>> _usernameInput() async {
+    return await Identities().nameArr();
   }
 
   final nameController = TextEditingController();
@@ -75,7 +45,38 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                     future: _usernameInput(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return snapshot.data!;
+                        return Form(
+                          key: _usernameInputFormKey,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (str) {
+                              if (str == '') {
+                                return 'Please enter the desired name for this new identity';
+                              } else if (str!.contains('|')) {
+                                return 'Disallowed character: |';
+                              }
+
+                              for (var i in snapshot.data!) {
+                                if (i == nameController.value.text) {
+                                  return "An identity with this name already exists";
+                                }
+                              }
+
+                              return null;
+                            },
+                            controller: nameController,
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colours.jet,
+                              border: OutlineInputBorder(),
+                              hintText:
+                                  'Enter the desired username for this identity',
+                              hintStyle: TextStyle(color: Colours.mintCream),
+                            ),
+                          ),
+                        );
                       } else if (snapshot.hasError) {
                         return Text("${snapshot.error}");
                       }
@@ -223,63 +224,8 @@ class ManageIdentitiesPage extends StatefulWidget {
 }
 
 class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
-  Future<Widget> _identitiesList() async {
-    List<Identity> identitiesArr = await Identities().read();
-
-    return ListView.builder(
-      itemCount: identitiesArr.length,
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(identitiesArr[index].name),
-          trailing: TextButton(
-            child: const Icon(
-              Icons.delete,
-              color: Colours.slateGray,
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext ctx) {
-                  return MaterialApp(
-                    home: AlertDialog(
-                      title: Text(
-                          "Are you sure you want to delete ${identitiesArr[index].name}?"),
-                      content: const Text("This action can not be undone"),
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              setState(() {
-                                Identities().rm(identitiesArr[index]);
-                              });
-
-                              Navigator.of(ctx).pop();
-                              if (identitiesArr.length == 1) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NewIdentityPage()),
-                                );
-                              }
-                            },
-                            child: const Text("Yes")),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(ctx).pop();
-                            },
-                            child: const Text("No")),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        );
-      },
-    );
+  Future<List<Identity>> _identitiesList() async {
+    return await Identities().read();
   }
 
   @override
@@ -298,7 +244,62 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                 future: _identitiesList(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return snapshot.data!;
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(snapshot.data![index].name),
+                          trailing: TextButton(
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colours.slateGray,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext ctx) {
+                                  return MaterialApp(
+                                    home: AlertDialog(
+                                      title: Text(
+                                          "Are you sure you want to delete ${snapshot.data![index].name}?"),
+                                      content: const Text(
+                                          "This action can not be undone"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                Identities()
+                                                    .rm(snapshot.data![index]);
+                                              });
+
+                                              Navigator.of(ctx).pop();
+                                              if (snapshot.data!.length == 1) {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const NewIdentityPage()),
+                                                );
+                                              }
+                                            },
+                                            child: const Text("Yes")),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                            child: const Text("No")),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
