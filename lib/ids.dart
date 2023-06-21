@@ -21,7 +21,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   List<String> keySizeOptions = <String>["2048", "3072", "4096"];
   final _usernameInputFormKey = GlobalKey<FormState>();
 
-  Future<List<String>> _usernameInput() async {
+  Future<List<String>> _identitiesNameArr() async {
     return await Identities().nameArr();
   }
 
@@ -42,7 +42,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                   padding:
                       EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
                   child: FutureBuilder(
-                    future: _usernameInput(),
+                    future: _identitiesNameArr(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Form(
