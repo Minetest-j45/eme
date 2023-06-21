@@ -73,7 +73,7 @@ class _NewContactPageState extends State<NewContactPage> {
           }
 
           for (var i in usernames) {
-            if (i == _controller.value.text) {
+            if (i == str) {
               return 'This name already exists';
             }
           }

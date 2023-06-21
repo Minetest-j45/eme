@@ -33,7 +33,7 @@ class Contacts {
   Future<List<String>> nameArr() async {
     List<Contact> contactsArr = await read();
     List<String> contactsStrs = [];
-    for (var contact in contactsArr) {
+    for (Contact contact in contactsArr) {
       contactsStrs.add(contact.name);
     }
 
@@ -55,14 +55,14 @@ class Contacts {
   }
 
   void add(Contact contact) async {
-    var contacts = await read();
+    List<Contact> contacts = await read();
     contacts.add(contact);
     _write(contacts);
   }
 
-  void rm(Contact contact) async {
-    var contacts = await read();
-    for (var cont in contacts) {
+  Future<void> rm(Contact contact) async {
+    List<Contact> contacts = await read();
+    for (Contact cont in contacts) {
       if ((cont.name == contact.name) &&
           (cont.pub == contact.pub) &&
           (cont.linkedIdentity == contact.linkedIdentity)) {
@@ -74,14 +74,28 @@ class Contacts {
   }
 
   Future<Contact?> get(String name) async {
-    var contacts = await read();
-    for (var cont in contacts) {
+    List<Contact> contacts = await read();
+    for (Contact cont in contacts) {
       if (cont.name == name) {
         return cont;
       }
     }
 
     return null;
+  }
+
+  void rename(String oldName, newName) async {
+    Contact? oldContact = await get(oldName);
+    if (oldContact == null) {
+      return;
+    }
+
+    await rm(oldContact);
+
+    add(Contact(
+        name: newName,
+        pub: oldContact.pub,
+        linkedIdentity: oldContact.linkedIdentity));
   }
 
   void rmAll() {

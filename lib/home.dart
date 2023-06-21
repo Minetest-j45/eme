@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage>
 
   Future<Widget> _contactList() async {
     List<Contact> conts = await Contacts().read();
+    List<String> usernames = await Contacts().nameArr();
     List<Contact> filtered = [];
     if (widget.currIdentity != "") {
       for (var cont in conts) {
@@ -72,7 +73,6 @@ class _HomePageState extends State<HomePage>
                                 setState(() {
                                   Contacts().rm(filtered[index]);
                                   Navigator.of(ctx).pop();
-                                });
                               },
                               child: const Text("Yes")),
                           TextButton(
@@ -85,6 +85,69 @@ class _HomePageState extends State<HomePage>
                     );
                   },
                 );
+              } else if (value == 2) {
+                final _renameForm = GlobalKey<FormState>();
+                final TextEditingController _renameField =
+                    TextEditingController(text: "");
+
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return MaterialApp(
+                      home: AlertDialog(
+                        title: Text('Rename ${filtered[index].name}:'),
+                        content: Form(
+                          key: _renameForm,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          child: TextFormField(
+                            validator: (str) {
+                              if (str == '') {
+                                return 'Please enter the new name for ${filtered[index].name}';
+                              }
+
+                              for (var i in usernames) {
+                                if (i == str) {
+                                  return 'This name already exists';
+                                }
+                              }
+
+                              return null;
+                            },
+                            controller: _renameField,
+                            decoration: InputDecoration(
+                              hintText:
+                                  'Enter the new name for ${filtered[index].name}',
+                            ),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Ok'),
+                            onPressed: () async {
+                              if (_renameForm.currentState!.validate()) {
+                                _renameForm.currentState!.save();
+                              } else {
+                                return;
+                              }
+
+                              setState(() {
+                                Contacts().rename(
+                                    filtered[index].name, _renameField.text);
+                              });
+                              Navigator.pop(ctx);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               }
             },
             itemBuilder: (context) => [
@@ -92,12 +155,28 @@ class _HomePageState extends State<HomePage>
                 value: 1,
                 child: Row(
                   children: [
-                    Icon(Icons.delete, color: Colors.red),
+                    Icon(Icons.delete, color: Colours.mintCream),
                     SizedBox(
                       width: 5,
                     ),
                     Text(
                       "Delete",
+                      style: TextStyle(color: Colours.mintCream),
+                    )
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 2,
+                child: Row(
+                  children: [
+                    Icon(Icons.drive_file_rename_outline_rounded,
+                        color: Colours.mintCream),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "Rename",
                       style: TextStyle(color: Colours.mintCream),
                     )
                   ],
