@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage>
 
     return ListView.builder(
       itemCount: filtered.length,
-      scrollDirection: Axis.vertical,
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
