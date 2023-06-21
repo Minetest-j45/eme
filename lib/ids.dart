@@ -239,9 +239,42 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
               color: Colours.slateGray,
             ),
             onPressed: () {
-              setState(() {
-                Identities().rm(identitiesArr[index]);
-              });
+              showDialog(
+                context: context,
+                builder: (BuildContext ctx) {
+                  return MaterialApp(
+                    home: AlertDialog(
+                      title: Text(
+                          "Are you sure you want to delete ${identitiesArr[index].name}?"),
+                      content: const Text("This action can not be undone"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              setState(() {
+                                Identities().rm(identitiesArr[index]);
+                              });
+
+                              Navigator.of(ctx).pop();
+                              if (identitiesArr.length == 1) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewIdentityPage()),
+                                );
+                              }
+                            },
+                            child: const Text("Yes")),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(ctx).pop();
+                            },
+                            child: const Text("No")),
+                      ],
+                    ),
+                  );
+                },
+              );
             },
           ),
         );
