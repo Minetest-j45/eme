@@ -72,7 +72,8 @@ class _HomePageState extends State<HomePage>
                               onPressed: () {
                                 setState(() {
                                   Contacts().rm(filtered[index]);
-                                  Navigator.of(ctx).pop();
+                                });
+                                Navigator.of(ctx).pop();
                               },
                               child: const Text("Yes")),
                           TextButton(
