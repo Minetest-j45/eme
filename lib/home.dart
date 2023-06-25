@@ -48,10 +48,21 @@ class _HomePageState extends State<HomePage>
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(
-            filtered[index].name,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colours.mintCream),
+          title: RichText(
+            text: TextSpan(
+                style: const TextStyle(
+                    color: Colours.mintCream, fontWeight: FontWeight.normal),
+                children: [
+                  TextSpan(
+                    text: filtered[index].name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (widget.currIdentity == "") ...[
+                    TextSpan(text: " - ${filtered[index].linkedIdentity}"),
+                  ]
+                ]),
           ),
           subtitle: Text(hashedArr[index],
               style: const TextStyle(fontFamily: "monospace")),
