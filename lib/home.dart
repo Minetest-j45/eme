@@ -454,6 +454,8 @@ class _HomePageState extends State<HomePage>
                                           });
 
                                           return DropdownButton(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             value: widget.currIdentity,
                                             dropdownColor: Colours.jet,
                                             iconEnabledColor: Colours.slateGray,
