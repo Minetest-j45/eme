@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
                 home: NewIdentityPage(),
               );
             } else {
-              return const MaterialApp(
+              return MaterialApp(
                 title: 'EME',
                 home: HomePage(
                   currIdentity: "",

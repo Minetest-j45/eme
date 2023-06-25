@@ -137,7 +137,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePage(
+                          builder: (context) => HomePage(
                             currIdentity: "",
                           ),
                         ),
@@ -176,7 +176,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const HomePage(
+                                builder: (context) => HomePage(
                                   currIdentity: "",
                                 ),
                               ),

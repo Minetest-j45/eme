@@ -53,8 +53,9 @@ class _NewContactPageState extends State<NewContactPage> {
             );
           }).toList(),
           onChanged: (String? value) {
-            _selectedIdentity = value!;
-            setState(() {});
+            setState(() {
+              _selectedIdentity = value!;
+            });
           },
         ),
       ),

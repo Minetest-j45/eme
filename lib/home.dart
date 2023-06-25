@@ -11,9 +11,9 @@ import 'newcontact.dart';
 import 'settings.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.currIdentity});
+  HomePage({super.key, required this.currIdentity});
 
-  final String currIdentity;
+  String currIdentity = "";
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -241,55 +241,17 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  var _selectedIdentity = "";
-  final _dropDownFormKey = GlobalKey<FormState>();
-  Future<Widget> _identitiesDropDown(context) async {
-    List<String> identitiesStrs = await Identities().nameArr();
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _dropDownFormKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: DropdownButtonFormField(
-          iconEnabledColor: Colours.slateGray,
-          dropdownColor: Colours.jet,
-          borderRadius: BorderRadius.circular(10),
-          value: _selectedIdentity == "" ? null : _selectedIdentity,
-          validator: (value) => value == null
-              ? "Please select the identity you want to use for decryption"
-              : null,
-          hint: const Text(
-            "Identity to use for decryption",
-            style: TextStyle(color: Colours.mintCream),
-          ),
-          items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: const TextStyle(color: Colours.mintCream),
-              ),
-            );
-          }).toList(),
-          onChanged: (String? value) {
-            _selectedIdentity = value!;
-            setState(() {});
-          },
-        ),
-      ),
-    );
+  Future<List<String>> _idNameArr() async {
+    return await Identities().nameArr();
   }
 
   final _rawController = TextEditingController();
   final _decryptedController = TextEditingController();
+  String _selectedIdentity = "";
+  String _filterId = "";
+  final _dropDownFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    String nicename = ": ${widget.currIdentity}";
-    if (widget.currIdentity == '') {
-      nicename = " all:";
-    }
-
     return MaterialApp(
         theme: Colours.theme,
         home: DefaultTabController(
@@ -357,7 +319,7 @@ class _HomePageState extends State<HomePage>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const HomePage(
+                                      builder: (context) => HomePage(
                                             currIdentity: "",
                                           )),
                                 );
@@ -426,12 +388,84 @@ class _HomePageState extends State<HomePage>
                     scrollDirection: Axis.vertical,
                     child: Column(
                       children: <Widget>[
-                        Text(
-                          'Contacts for$nicename',
-                          style: const TextStyle(
-                              fontSize: 26,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.bold),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Filters:",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Container(
+                                margin: const EdgeInsets.all(5.0),
+                                padding: const EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colours.slateGray),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Text("Identity:"),
+                                    const SizedBox(width: 10),
+                                    FutureBuilder(
+                                      future: _idNameArr(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          List<DropdownMenuItem<String>>
+                                              filterIdsList = [
+                                            const DropdownMenuItem<String>(
+                                              value: "",
+                                              child: Text(
+                                                "All",
+                                                style: TextStyle(
+                                                    color: Colours.slateGray),
+                                              ),
+                                            ),
+                                          ];
+
+                                          snapshot.data!
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(
+                                                value,
+                                                style: const TextStyle(
+                                                    color: Colours.mintCream),
+                                              ),
+                                            );
+                                          }).forEach((element) {
+                                            filterIdsList.add(element);
+                                          });
+
+                                          return DropdownButton(
+                                            value: _filterId,
+                                            dropdownColor: Colours.jet,
+                                            items: filterIdsList,
+                                            onChanged: (String? value) {
+                                              setState(() {
+                                                if (value != null) {
+                                                  widget.currIdentity = value;
+                                                  _filterId = value;
+                                                }
+                                              });
+                                            },
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Text("${snapshot.error}");
+                                        }
+
+                                        return const CircularProgressIndicator();
+                                      },
+                                    ),
+                                  ],
+                                )),
+                          ],
                         ),
                         FutureBuilder(
                           future: _contactList(),
@@ -465,10 +499,49 @@ class _HomePageState extends State<HomePage>
                   scrollDirection: Axis.vertical,
                   child: Column(children: <Widget>[
                     FutureBuilder(
-                      future: _identitiesDropDown(context),
+                      future: _idNameArr(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return snapshot.data!;
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Form(
+                              key: _dropDownFormKey,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              child: DropdownButtonFormField(
+                                iconEnabledColor: Colours.slateGray,
+                                dropdownColor: Colours.jet,
+                                borderRadius: BorderRadius.circular(10),
+                                value: _selectedIdentity == ""
+                                    ? null
+                                    : _selectedIdentity,
+                                validator: (value) => value == null
+                                    ? "Please select the identity you want to use for decryption"
+                                    : null,
+                                hint: const Text(
+                                  "Identity to use for decryption",
+                                  style: TextStyle(color: Colours.mintCream),
+                                ),
+                                items: snapshot.data!
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      style: const TextStyle(
+                                          color: Colours.mintCream),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _selectedIdentity = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                          );
                         } else if (snapshot.hasError) {
                           return Text("${snapshot.error}");
                         }
@@ -507,44 +580,52 @@ class _HomePageState extends State<HomePage>
                       style: const TextStyle(color: Colors.red),
                     ),
                     TextButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colours.slateGray)),
-                      onPressed: () async {
-                        if (_dropDownFormKey.currentState!.validate()) {
-                          _dropDownFormKey.currentState!.save();
-                        } else {
-                          return;
-                        }
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colours.slateGray)),
+                        onPressed: () async {
+                          if (_dropDownFormKey.currentState!.validate()) {
+                            _dropDownFormKey.currentState!.save();
+                          } else {
+                            return;
+                          }
 
-                        Identity? id =
-                            await Identities().get(_selectedIdentity);
+                          Identity? id =
+                              await Identities().get(_selectedIdentity);
 
-                        if (id == null) {
-                          return;
-                        }
+                          if (id == null) {
+                            return;
+                          }
 
-                        _decryptedController.text = "Loading...";
+                          _decryptedController.text = "Loading...";
 
-                        try {
-                          String decrypted = await RSA.decryptOAEP(
-                              _rawController.text, "", Hash.SHA256, id.priv);
+                          try {
+                            String decrypted = await RSA.decryptOAEP(
+                                _rawController.text, "", Hash.SHA256, id.priv);
 
-                          setState(() {
-                            _decryptedController.text = decrypted;
-                          });
-                        } on RSAException {
-                          setState(() {
-                            _decryptErr = "Error decrypting message";
-                          });
-                          return;
-                        }
-                      },
-                      child: const Text(
-                        'Decrypt',
-                        style: TextStyle(color: Colours.mintCream),
-                      ),
-                    ),
+                            setState(() {
+                              _decryptedController.text = decrypted;
+                            });
+                          } on RSAException {
+                            setState(() {
+                              _decryptErr = "Error decrypting message";
+                            });
+                            return;
+                          }
+                        },
+                        child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                Icons.lock_open,
+                                color: Colours.mintCream,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                'Decrypt',
+                                style: TextStyle(color: Colours.mintCream),
+                              ),
+                            ])),
                     TextFormField(
                       controller: _decryptedController,
                       decoration: InputDecoration(
