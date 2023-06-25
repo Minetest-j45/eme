@@ -134,12 +134,6 @@ class _HomePageState extends State<HomePage>
                         ),
                         actions: <Widget>[
                           TextButton(
-                            child: const Text('Cancel'),
-                            onPressed: () {
-                              Navigator.pop(ctx);
-                            },
-                          ),
-                          TextButton(
                             child: const Text('Ok'),
                             onPressed: () async {
                               if (renameForm.currentState!.validate()) {
@@ -152,6 +146,12 @@ class _HomePageState extends State<HomePage>
                                 Contacts().rename(
                                     filtered[index].name, renameField.text);
                               });
+                              Navigator.pop(ctx);
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
                               Navigator.pop(ctx);
                             },
                           ),

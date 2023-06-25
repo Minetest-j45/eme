@@ -234,7 +234,7 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
       theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Generate a new keypair'),
+          title: const Text('Manage Identities'),
         ),
         body: Center(
           child: Column(
