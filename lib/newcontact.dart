@@ -10,17 +10,22 @@ import 'identities.dart';
 import 'qr_codes.dart';
 
 class NewContactPage extends StatefulWidget {
-  const NewContactPage({super.key});
+  NewContactPage(
+      {super.key,
+      required this.newContactName,
+      required this.newContactLinked});
+
+  String newContactName = "";
+  String newContactLinked = "";
 
   @override
   State<NewContactPage> createState() => _NewContactPageState();
 }
 
 class _NewContactPageState extends State<NewContactPage> {
-  String _selectedIdentity = "";
   final _dropDownFormKey = GlobalKey<FormState>();
   final _usernameInputFormKey = GlobalKey<FormState>();
-  final TextEditingController _controller = TextEditingController(text: "");
+  late TextEditingController _controller;
 
   Future<Widget> _identitiesDropDown(context) async {
     List<String> identitiesStrs = await Identities().nameArr();
@@ -33,14 +38,14 @@ class _NewContactPageState extends State<NewContactPage> {
         child: DropdownButtonFormField(
           dropdownColor: Colours.jet,
           borderRadius: BorderRadius.circular(10),
-          value: _selectedIdentity == "" ? null : _selectedIdentity,
+          value: widget.newContactLinked == "" ? null : widget.newContactLinked,
           validator: (value) => value == null
-              ? "Please select the identity you want to relate this contact to"
+              ? "Please select the identity you want to link this contact to"
               : null,
           hint: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
               child: const Text(
-                "Identity to relate this new contact to",
+                "Identity to link this new contact to",
                 style: TextStyle(color: Colours.mintCream),
               )),
           items: identitiesStrs.map<DropdownMenuItem<String>>((String value) {
@@ -54,7 +59,7 @@ class _NewContactPageState extends State<NewContactPage> {
           }).toList(),
           onChanged: (String? value) {
             setState(() {
-              _selectedIdentity = value!;
+              widget.newContactLinked = value!;
             });
           },
         ),
@@ -96,7 +101,7 @@ class _NewContactPageState extends State<NewContactPage> {
 
   bool _qrShow = false;
   Future<Widget> _qrImgLoad(context) async {
-    var id = await Identities().get(_selectedIdentity);
+    var id = await Identities().get(widget.newContactLinked);
     if (id == null) {
       return const Column();
     }
@@ -160,6 +165,13 @@ class _NewContactPageState extends State<NewContactPage> {
         )
       ],
     );
+  }
+
+  @override
+  void initState() {
+    _controller = TextEditingController(text: widget.newContactName);
+
+    super.initState();
   }
 
   @override
@@ -250,7 +262,8 @@ class _NewContactPageState extends State<NewContactPage> {
                                     MaterialPageRoute(
                                         builder: (context) => QRScanPage(
                                               name: _controller.value.text,
-                                              linkedIdentity: _selectedIdentity,
+                                              linkedIdentity:
+                                                  widget.newContactLinked,
                                             )),
                                   );
                                 });
@@ -283,7 +296,8 @@ class _NewContactPageState extends State<NewContactPage> {
                                     MaterialPageRoute(
                                         builder: (context) => ManualAddPage(
                                               name: _controller.value.text,
-                                              linkedIdentity: _selectedIdentity,
+                                              linkedIdentity:
+                                                  widget.newContactLinked,
                                             )),
                                   );
                                 });
@@ -414,7 +428,11 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
             setState(() {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NewContactPage()),
+                MaterialPageRoute(
+                    builder: (context) => NewContactPage(
+                          newContactName: widget.name,
+                          newContactLinked: widget.linkedIdentity,
+                        )),
               );
             });
           },
@@ -436,7 +454,10 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const NewContactPage()),
+                          builder: (context) => NewContactPage(
+                                newContactName: "",
+                                newContactLinked: "",
+                              )),
                     );
                   });
                 },
