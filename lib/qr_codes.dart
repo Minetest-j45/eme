@@ -173,7 +173,7 @@ class _ManualAddPageState extends State<ManualAddPage> {
       theme: Colours.theme,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("EME"),
+          title: const Text("Paste Public Key"),
         ),
         body: Center(
             child: SingleChildScrollView(

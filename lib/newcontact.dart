@@ -168,7 +168,7 @@ class _NewContactPageState extends State<NewContactPage> {
         theme: Colours.theme,
         home: Scaffold(
             appBar: AppBar(
-              title: const Text('EME'),
+              title: const Text('New Contact'),
             ),
             body: SingleChildScrollView(
               child: Center(
