@@ -259,7 +259,6 @@ class _HomePageState extends State<HomePage>
   final _rawController = TextEditingController();
   final _decryptedController = TextEditingController();
   String _selectedIdentity = "";
-  String _filterId = "";
   final _dropDownFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -455,7 +454,7 @@ class _HomePageState extends State<HomePage>
                                           });
 
                                           return DropdownButton(
-                                            value: _filterId,
+                                            value: widget.currIdentity,
                                             dropdownColor: Colours.jet,
                                             iconEnabledColor: Colours.slateGray,
                                             items: filterIdsList,
@@ -467,7 +466,6 @@ class _HomePageState extends State<HomePage>
                                               setState(() {
                                                 if (value != null) {
                                                   widget.currIdentity = value;
-                                                  _filterId = value;
                                                 }
                                               });
                                             },
