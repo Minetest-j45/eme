@@ -217,22 +217,31 @@ class _HomePageState extends State<HomePage>
     List<Widget> textButtonList = [];
 
     for (var id in identitiesArr) {
-      textButtonList.add(const SizedBox(
-        height: 10,
-      ));
-
       textButtonList.add(
-        Text.rich(
-          TextSpan(
-            text: id.name,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colours.mintCream),
-            children: <TextSpan>[
-              TextSpan(
-                  text:
-                      "\n${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}",
-                  style: const TextStyle(fontFamily: "monospace"))
-            ],
+        TextButton(
+          onPressed: () {
+            setState(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage(
+                          currIdentity: id.name,
+                        )),
+              );
+            });
+          },
+          child: Text.rich(
+            TextSpan(
+              text: id.name,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colours.mintCream),
+              children: <TextSpan>[
+                TextSpan(
+                    text:
+                        "\n${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}",
+                    style: const TextStyle(fontFamily: "monospace"))
+              ],
+            ),
           ),
         ),
       );
