@@ -457,7 +457,12 @@ class _HomePageState extends State<HomePage>
                                           return DropdownButton(
                                             value: _filterId,
                                             dropdownColor: Colours.jet,
+                                            iconEnabledColor: Colours.slateGray,
                                             items: filterIdsList,
+                                            underline: Container(
+                                              height: 1,
+                                              color: Colours.raisinBlack,
+                                            ),
                                             onChanged: (String? value) {
                                               setState(() {
                                                 if (value != null) {
