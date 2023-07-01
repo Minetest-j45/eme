@@ -164,7 +164,9 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
 
                           await RSA.encryptOAEP(
                               "test", "", Hash.SHA256, public);
-                        } on RSAException {}
+                        } on RSAException {
+                          //
+                        }
 
                         if (public != "") {
                           Identities().add(Identity(
