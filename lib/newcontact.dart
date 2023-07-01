@@ -353,6 +353,7 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
     }
 
     return Column(children: [
+      Text("Linked identity: ${widget.linkedIdentity}"),
       Text(
           "My public key summary (hash): ${(await RSA.hash(id.pub, Hash.SHA256)).substring(0, 7)}"),
       Offstage(
@@ -408,19 +409,16 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
         thickness: 2,
         color: Colours.raisinBlack,
       ),
+      Text("New contact name: ${widget.name}"),
       Text(
         "Their public key summary (hash): ${(await RSA.hash(widget.theirPub, Hash.SHA256)).substring(0, 7)}",
         style: TextStyle(color: _err == "" ? Colours.mintCream : Colors.red),
       ),
-      const Divider(
-        thickness: 2,
-        color: Colours.raisinBlack,
-      ),
-      Text(
-        _err,
-        style: const TextStyle(color: Colors.red),
-      ),
       if (_err != "") ...[
+        Text(
+          _err,
+          style: const TextStyle(color: Colors.red),
+        ),
         TextButton(
           style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colours.slateGray)),
@@ -510,12 +508,6 @@ class _ConfirmContactPageState extends State<ConfirmContactPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("New contact name: ${widget.name}"),
-              Text("Linked identity: ${widget.linkedIdentity}"),
-              const Divider(
-                thickness: 2,
-                color: Colours.raisinBlack,
-              ),
               FutureBuilder(
                 future: _hashLoad(),
                 builder: (context, snapshot) {
