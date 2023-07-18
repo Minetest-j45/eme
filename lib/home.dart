@@ -357,25 +357,6 @@ class _HomePageState extends State<HomePage>
                                   });
                                 },
                               ),
-                              TextButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colours.slateGray)),
-                                child: const Text(
-                                  'Add new identity',
-                                  style: TextStyle(color: Colours.mintCream),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const NewIdentityPage()),
-                                    );
-                                  });
-                                },
-                              ),
                             ],
                           ),
                         ),
@@ -391,24 +372,24 @@ class _HomePageState extends State<HomePage>
                             return const CircularProgressIndicator();
                           },
                         ),
-                    Center(
-                      child: CircleAvatar(
-                          backgroundColor: Colours.slateGray,
-                          child: IconButton(
-                            icon:
-                                const Icon(Icons.add, color: Colours.mintCream),
-                            onPressed: () {
-                              setState(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NewIdentityPage()),
-                                );
-                              });
-                            },
-                          )),
-                    ),
+                        Center(
+                          child: CircleAvatar(
+                              backgroundColor: Colours.slateGray,
+                              child: IconButton(
+                                icon: const Icon(Icons.add,
+                                    color: Colours.mintCream),
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const NewIdentityPage()),
+                                    );
+                                  });
+                                },
+                              )),
+                        ),
                       ],
                     ),
                   )),
