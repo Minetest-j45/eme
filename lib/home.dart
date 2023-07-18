@@ -414,7 +414,8 @@ class _HomePageState extends State<HomePage>
                                 const SizedBox(width: 20),
                                 Container(
                                     margin: const EdgeInsets.all(5.0),
-                                    padding: const EdgeInsets.all(5.0),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 1, 5, 1),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                           width: 2, color: Colours.slateGray),
