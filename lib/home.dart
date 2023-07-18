@@ -391,6 +391,24 @@ class _HomePageState extends State<HomePage>
                             return const CircularProgressIndicator();
                           },
                         ),
+                    Center(
+                      child: CircleAvatar(
+                          backgroundColor: Colours.slateGray,
+                          child: IconButton(
+                            icon:
+                                const Icon(Icons.add, color: Colours.mintCream),
+                            onPressed: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewIdentityPage()),
+                                );
+                              });
+                            },
+                          )),
+                    ),
                       ],
                     ),
                   )),
