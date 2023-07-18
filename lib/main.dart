@@ -24,7 +24,9 @@ class MyApp extends StatelessWidget {
             if (snapshot.data!) {
               return const MaterialApp(
                 title: 'EME',
-                home: NewIdentityPage(),
+                home: NewIdentityPage(
+                  backwardsEnabled: false,
+                ),
               );
             } else {
               return MaterialApp(

@@ -10,7 +10,9 @@ import 'identities.dart';
 import 'util.dart';
 
 class NewIdentityPage extends StatefulWidget {
-  const NewIdentityPage({super.key});
+  const NewIdentityPage({super.key, required this.backwardsEnabled});
+
+  final bool backwardsEnabled;
 
   @override
   State<NewIdentityPage> createState() => _NewIdentityPageState();
@@ -27,7 +29,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async => false,
+        onWillPop: () async => widget.backwardsEnabled,
         child: MaterialApp(
             theme: Colours.theme,
             home: Scaffold(
@@ -256,7 +258,9 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const NewIdentityPage()),
+                                                          const NewIdentityPage(
+                                                              backwardsEnabled:
+                                                                  false)),
                                                 );
                                               }
                                             },
@@ -310,7 +314,9 @@ class _ManageIdentitiesPageState extends State<ManageIdentitiesPage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const NewIdentityPage()),
+                                                const NewIdentityPage(
+                                                  backwardsEnabled: false,
+                                                )),
                                       );
                                     },
                                   );

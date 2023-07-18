@@ -104,7 +104,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const NewIdentityPage()),
+                                                const NewIdentityPage(
+                                                  backwardsEnabled: false,
+                                                )),
                                       );
                                     },
                                   );

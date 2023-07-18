@@ -316,7 +316,8 @@ class _HomePageState extends State<HomePage>
                           ),
                         ),
                         Center(
-                          child: Column(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               TextButton(
                                 style: ButtonStyle(
@@ -338,24 +339,22 @@ class _HomePageState extends State<HomePage>
                                   });
                                 },
                               ),
-                              TextButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colours.slateGray)),
-                                child: const Text(
-                                  'Manage identities',
-                                  style: TextStyle(color: Colours.mintCream),
+                              CircleAvatar(
+                                backgroundColor: Colours.slateGray,
+                                child: IconButton(
+                                  icon: const Icon(Icons.settings,
+                                      color: Colours.mintCream),
+                                  onPressed: () {
+                                    setState(() {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ManageIdentitiesPage()),
+                                      );
+                                    });
+                                  },
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ManageIdentitiesPage()),
-                                    );
-                                  });
-                                },
                               ),
                             ],
                           ),
@@ -384,7 +383,9 @@ class _HomePageState extends State<HomePage>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const NewIdentityPage()),
+                                              const NewIdentityPage(
+                                                backwardsEnabled: true,
+                                              )),
                                     );
                                   });
                                 },
