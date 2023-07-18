@@ -28,193 +28,196 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
   final nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: Colours.theme,
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('New Identity'),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
-                  child: FutureBuilder(
-                    future: _identitiesNameArr(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Form(
-                          key: _usernameInputFormKey,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (str) {
-                              if (str == '') {
-                                return 'Please enter the desired name for this new identity';
-                              } else if (str!.contains('|')) {
-                                return 'Disallowed character: |';
-                              }
-
-                              for (var i in snapshot.data!) {
-                                if (i == nameController.value.text) {
-                                  return "An identity with this name already exists";
-                                }
-                              }
-
-                              return null;
-                            },
-                            controller: nameController,
-                            decoration: const InputDecoration(
-                              filled: true,
-                              fillColor: Colours.jet,
-                              border: OutlineInputBorder(),
-                              hintText:
-                                  'Enter the desired username for this identity',
-                              hintStyle: TextStyle(color: Colours.mintCream),
-                            ),
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-
-                      return const CircularProgressIndicator();
-                    },
-                  ),
-                ),
-                Row(
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: MaterialApp(
+            theme: Colours.theme,
+            home: Scaffold(
+              appBar: AppBar(
+                title: const Text('New Identity'),
+              ),
+              body: Center(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    DropdownButton(
-                      dropdownColor: Colours.jet,
-                      items: keySizeOptions
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: const TextStyle(color: Colours.mintCream),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          _keySize = value!;
-                        });
-                      },
-                      value: _keySize,
-                    ),
-                  ],
-                ),
-                SingleTapButton(
-                  delay: 10,
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colours.slateGray)),
-                  child: const Text(
-                    'Generate new keypair',
-                    style: TextStyle(color: Colours.mintCream),
-                  ),
-                  onPressed: () async {
-                    if (_usernameInputFormKey.currentState!.validate()) {
-                      _usernameInputFormKey.currentState!.save();
-                    } else {
-                      return;
-                    }
+                    Padding(
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.06),
+                      child: FutureBuilder(
+                        future: _identitiesNameArr(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Form(
+                              key: _usernameInputFormKey,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              child: TextFormField(
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (str) {
+                                  if (str == '') {
+                                    return 'Please enter the desired name for this new identity';
+                                  } else if (str!.contains('|')) {
+                                    return 'Disallowed character: |';
+                                  }
 
-                    int keySize = int.parse(_keySize);
+                                  for (var i in snapshot.data!) {
+                                    if (i == nameController.value.text) {
+                                      return "An identity with this name already exists";
+                                    }
+                                  }
 
-                    var pair = await RSA.generate(keySize);
-                    Identities().add(Identity(
-                        name: nameController.value.text,
-                        pub: pair.publicKey,
-                        priv: pair.privateKey));
-
-                    setState(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            currIdentity: "",
-                          ),
-                        ),
-                      );
-                    });
-                  },
-                ),
-                const Text("or", style: TextStyle(color: Colours.mintCream)),
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colours.slateGray)),
-                    onPressed: () async {
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(withData: true);
-
-                      if (result != null) {
-                        var private = utf8.decode(result.files.first.bytes!);
-                        String public = "";
-
-                        try {
-                          public =
-                              await RSA.convertPrivateKeyToPublicKey(private);
-
-                          await RSA.encryptOAEP(
-                              "test", "", Hash.SHA256, public);
-                        } on RSAException {
-                          //
-                        }
-
-                        if (public != "") {
-                          Identities().add(Identity(
-                              name: nameController.value.text,
-                              pub: public,
-                              priv: private));
-
-                          setState(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(
-                                  currIdentity: "",
+                                  return null;
+                                },
+                                controller: nameController,
+                                decoration: const InputDecoration(
+                                  filled: true,
+                                  fillColor: Colours.jet,
+                                  border: OutlineInputBorder(),
+                                  hintText:
+                                      'Enter the desired username for this identity',
+                                  hintStyle:
+                                      TextStyle(color: Colours.mintCream),
                                 ),
                               ),
                             );
-                          });
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+
+                          return const CircularProgressIndicator();
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        DropdownButton(
+                          dropdownColor: Colours.jet,
+                          items: keySizeOptions
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style:
+                                    const TextStyle(color: Colours.mintCream),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _keySize = value!;
+                            });
+                          },
+                          value: _keySize,
+                        ),
+                      ],
+                    ),
+                    SingleTapButton(
+                      delay: 10,
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colours.slateGray)),
+                      child: const Text(
+                        'Generate new keypair',
+                        style: TextStyle(color: Colours.mintCream),
+                      ),
+                      onPressed: () async {
+                        if (_usernameInputFormKey.currentState!.validate()) {
+                          _usernameInputFormKey.currentState!.save();
                         } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext ctx) {
-                              return AlertDialog(
-                                  title: const Text(
-                                      "Error with uploaded private key"),
-                                  content: const Text(
-                                      "Please make sure it is PEM encoded in a file with nothing else"),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.of(ctx).pop();
-                                        },
-                                        child: const Text("Okay")),
-                                  ]);
-                            },
-                          );
+                          return;
                         }
-                      } else {
-                        // User canceled the picker
-                      }
-                    },
-                    child: const Text(
-                      "Upload private key",
-                      style: TextStyle(color: Colours.mintCream),
-                    )),
-              ],
-            ),
-          ),
-        ));
+
+                        int keySize = int.parse(_keySize);
+
+                        var pair = await RSA.generate(keySize);
+                        Identities().add(Identity(
+                            name: nameController.value.text,
+                            pub: pair.publicKey,
+                            priv: pair.privateKey));
+
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomePage(
+                                currIdentity: "",
+                              ),
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(withData: true);
+
+                          if (result != null) {
+                            var private =
+                                utf8.decode(result.files.first.bytes!);
+                            String public = "";
+
+                            try {
+                              public = await RSA
+                                  .convertPrivateKeyToPublicKey(private);
+
+                              await RSA.encryptOAEP(
+                                  "test", "", Hash.SHA256, public);
+                            } on RSAException {
+                              //
+                            }
+
+                            if (public != "") {
+                              Identities().add(Identity(
+                                  name: nameController.value.text,
+                                  pub: public,
+                                  priv: private));
+
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                      currIdentity: "",
+                                    ),
+                                  ),
+                                );
+                              });
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext ctx) {
+                                  return AlertDialog(
+                                      title: const Text(
+                                          "Error with uploaded private key"),
+                                      content: const Text(
+                                          "Please make sure it is PEM encoded in a file with nothing else"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                            child: const Text("Okay")),
+                                      ]);
+                                },
+                              );
+                            }
+                          }
+                        },
+                        child: const Text(
+                          "Or upload private key",
+                          style: TextStyle(
+                            color: Colours.slateGray,
+                            decoration: TextDecoration.underline,
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            )));
   }
 }
 
