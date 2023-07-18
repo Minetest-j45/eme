@@ -1,4 +1,4 @@
-package com.example.eme
+package dev.j45.eme
 
 import io.flutter.embedding.android.FlutterActivity
 
