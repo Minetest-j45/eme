@@ -17,8 +17,6 @@ class NewIdentityPage extends StatefulWidget {
 }
 
 class _NewIdentityPageState extends State<NewIdentityPage> {
-  String _keySize = "4096";
-  List<String> keySizeOptions = <String>["2048", "3072", "4096"];
   final _usernameInputFormKey = GlobalKey<FormState>();
 
   Future<List<String>> _identitiesNameArr() async {
@@ -89,31 +87,6 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                         },
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        DropdownButton(
-                          dropdownColor: Colours.jet,
-                          items: keySizeOptions
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style:
-                                    const TextStyle(color: Colours.mintCream),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _keySize = value!;
-                            });
-                          },
-                          value: _keySize,
-                        ),
-                      ],
-                    ),
                     SingleTapButton(
                       delay: 10,
                       style: ButtonStyle(
@@ -130,9 +103,7 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                           return;
                         }
 
-                        int keySize = int.parse(_keySize);
-
-                        var pair = await RSA.generate(keySize);
+                        var pair = await RSA.generate(4096);
                         Identities().add(Identity(
                             name: nameController.value.text,
                             pub: pair.publicKey,
